@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//api/keystone/client.py=utf-8
+encoding//metadata/auth_metadata.py=utf-8
+encoding//proxy/server.py=utf-8
+encoding//services/frontend/auth/authFilter.py=utf-8
+encoding//services/frontend/auth/authenticate.py=utf-8
+encoding//services/frontend/auth/test.py=utf-8
+encoding//services/frontend/resmgr/account.py=utf-8
+encoding//services/frontend/resmgr/container.py=utf-8
+encoding//services/frontend/resmgr/obj.py=utf-8

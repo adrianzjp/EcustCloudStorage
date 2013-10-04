@@ -151,9 +151,13 @@ class Client(baseclient.HTTPClient):
 #            _logger.exception("unable to retrieve service catalog with token")
 if __name__ == '__main__':
     aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
+    print aus.auth_token
+    print aus.auth_url
+    
     print '下面是关于users类的相关操作结果:'
     print 'users.findall()','-'*100
     print len(aus.users.findall())
+    
     
 #     for n in aus.users.findall():
 #         print n.name
@@ -173,7 +177,6 @@ if __name__ == '__main__':
     
     print aus.roles.findall()
     
-    print aus.users.get('86d636091b814756b98225928b35954e')
     
 #     pring aus.users.update_enabled(user, enabled)
         
