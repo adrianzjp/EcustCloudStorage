@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 '''
+Created on 2013年10月10日
+
+@author: adrian
+'''
+
+
+# -*- coding: utf-8 -*-
+'''
 Created on 2013年9月28日
 
 @author: adrian
@@ -13,7 +21,7 @@ from wsgiref.simple_server import make_server
 
 from api.swift import swiftAPI
 #Filter
-class AuthFilter():
+class ControllerFilter():
     def __init__(self,app):
         self.app = app
         pass
@@ -25,30 +33,37 @@ class AuthFilter():
         self.userKey = ''
         self.token = ''
         
+        url_path = req.path.strip('/').split('/')
         
-        for n in req.headers:
-            if 'X-Auth-User' == n:
-                self.userName = str(req.headers[n]).strip()
-            if 'X-Auth-Key' == n:
-                self.userKey = str(req.headers[n]).strip()
-#         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
-        try:
+        if url_path[0]=='scloud_domain':
+            req.headers['domain'] = url_path[1]
             
-            auth_url =  str(self.app.global_conf['AUTH_URL']).strip("'")
-            url, self.token =  swiftAPI.Connection(authurl =auth_url, user = self.userName, key = self.userKey, tenant_name = req.headers['domain'])\
-            .get_auth()         
-               
-        except Exception,e:
-            print e
-        
-        if self.token:
-            req.headers['token'] = self.token
             return self.app(environ,start_response)
+        
+        elif url_path[0] == 'scloud_container':
+            req.headers['domain'] = url_path[1]
+            req.headers['container'] = url_path[2]
+            
+            return self.app(environ,start_response)
+        
+        elif url_path[0] == 'scloud_object':
+            req.headers['domain'] = url_path[1]
+            req.headers['container'] = url_path[2]
+            req.headers['object'] = url_path[3]
+            
+            return self.app(environ,start_response)
+            
         else:
             start_response("403 AccessDenied",[("Content-type", "text/plain"),
                                          ])
             return ''
+        
+        print url_path
+        
+        
+        
+        return self.app(environ,start_response)
     @classmethod
     def factory(cls, global_conf, **kwargs):
         print "in LogFilter.factory", global_conf, kwargs
-        return AuthFilter
+        return ControllerFilter
