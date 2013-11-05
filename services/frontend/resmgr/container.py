@@ -22,6 +22,9 @@ from api import settings
 class AccountController():
 =======
 class ContainerController():
+<<<<<<< HEAD
+>>>>>>> parent of 32f7b0e... 2013-11-05
+=======
 >>>>>>> parent of 32f7b0e... 2013-11-05
     def __init__(self, global_conf):
         self.global_conf = global_conf
@@ -68,8 +71,13 @@ class ContainerController():
             auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
             headers,body=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = req.headers['domain']).get_container(req.headers['container']))
+<<<<<<< HEAD
             
             
+=======
+            
+            
+>>>>>>> parent of 32f7b0e... 2013-11-05
             for value in headers:
                 x = (value,headers[value])
                 resheaders.append(x)
@@ -140,6 +148,9 @@ class ContainerController():
         
         
     def PUT(self, environ,start_response):
+<<<<<<< HEAD
+>>>>>>> parent of 32f7b0e... 2013-11-05
+=======
 >>>>>>> parent of 32f7b0e... 2013-11-05
         req = Request(environ)
         res = Response()
@@ -147,6 +158,7 @@ class ContainerController():
         self.userName = 'x'
         self.userKey = 'x'
         self.token = ''
+<<<<<<< HEAD
 <<<<<<< HEAD
         
         for n in req.headers:
@@ -157,6 +169,8 @@ class ContainerController():
 #         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
 
 =======
+=======
+>>>>>>> parent of 32f7b0e... 2013-11-05
         self.content = ''
         for n in req.headers:
             if 'X-Auth-User' == n:
@@ -212,6 +226,9 @@ class ContainerController():
                 self.userKey = req.headers[n]
 #         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
 
+<<<<<<< HEAD
+>>>>>>> parent of 32f7b0e... 2013-11-05
+=======
 >>>>>>> parent of 32f7b0e... 2013-11-05
         flag = 1
         contianers_in_account = ''
@@ -221,8 +238,13 @@ class ContainerController():
             print self.global_conf['AUTH_URL']
             auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
 <<<<<<< HEAD
+<<<<<<< HEAD
             resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = 'admin').get_account())
+=======
+            resbody=  (Connection(authurl =auth_url, user = self.userName,\
+                            key = self.userKey, tenant_name = req.headers['domain']).delete_container(req.headers['container']))
+>>>>>>> parent of 32f7b0e... 2013-11-05
 =======
             resbody=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = req.headers['domain']).delete_container(req.headers['container']))
@@ -246,8 +268,11 @@ class ContainerController():
             return [str(contianers_in_account),]
         else:
 <<<<<<< HEAD
+<<<<<<< HEAD
             return ["you are not authenticated"]
 =======
+=======
+>>>>>>> parent of 32f7b0e... 2013-11-05
             start_response("200 OK", [])
 #             return ["you are not authenticated"]
         

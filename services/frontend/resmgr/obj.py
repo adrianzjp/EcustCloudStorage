@@ -75,6 +75,7 @@ class AccountController():
             start_response("404 NoSuchFile", [])
             self.content = ''
 #             return ["you are not authenticated"]
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
         
         return self.content
@@ -88,6 +89,11 @@ class AccountController():
     def __call__(self,environ,start_response):
         
 =======
+=======
+        
+        return self.content
+        
+>>>>>>> parent of 32f7b0e... 2013-11-05
     def HEAD(self, environ,start_response):
         req = Request(environ)
         res = Response()
@@ -136,6 +142,9 @@ class AccountController():
         
         
     def PUT(self, environ,start_response):
+<<<<<<< HEAD
+>>>>>>> parent of 32f7b0e... 2013-11-05
+=======
 >>>>>>> parent of 32f7b0e... 2013-11-05
         req = Request(environ)
         res = Response()
@@ -144,7 +153,11 @@ class AccountController():
         self.userKey = 'x'
         self.token = ''
 <<<<<<< HEAD
+<<<<<<< HEAD
         
+=======
+        self.content = ''
+>>>>>>> parent of 32f7b0e... 2013-11-05
 =======
         self.content = ''
 >>>>>>> parent of 32f7b0e... 2013-11-05
@@ -155,10 +168,13 @@ class AccountController():
                 self.userKey = req.headers[n]
 #         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         flag = 1
         contianers_in_account = ''
 =======
+=======
+>>>>>>> parent of 32f7b0e... 2013-11-05
 
         flag = 1
         resheaders = []
@@ -166,6 +182,7 @@ class AccountController():
 #             def get_auth(url, user, key, tenant_name=None):
             print self.global_conf['AUTH_URL']
             auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
+<<<<<<< HEAD
             
             #     file = open('//Users//adrian//Desktop//scloud.sql','rb')
             #     conn.put_object('haha','scloud.sql',file,headers = {})
@@ -173,6 +190,15 @@ class AccountController():
                             key = self.userKey, tenant_name = req.headers['domain']).put_container(req.headers['container']))
             
             
+=======
+            
+            #     file = open('//Users//adrian//Desktop//scloud.sql','rb')
+            #     conn.put_object('haha','scloud.sql',file,headers = {})
+            resbody=  (Connection(authurl =auth_url, user = self.userName,\
+                            key = self.userKey, tenant_name = req.headers['domain']).put_container(req.headers['container']))
+            
+            
+>>>>>>> parent of 32f7b0e... 2013-11-05
             for value in resbody:
                 x = (value,resbody[value])
                 resheaders.append(x)
@@ -211,12 +237,16 @@ class AccountController():
 #         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
 
         flag = 1
+<<<<<<< HEAD
+>>>>>>> parent of 32f7b0e... 2013-11-05
+=======
 >>>>>>> parent of 32f7b0e... 2013-11-05
         resheaders = []
         try:
 #             def get_auth(url, user, key, tenant_name=None):
             print self.global_conf['AUTH_URL']
             auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
+<<<<<<< HEAD
 <<<<<<< HEAD
             resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = 'admin').get_account())
@@ -232,6 +262,11 @@ class AccountController():
                             key = self.userKey, tenant_name = req.headers['domain']).delete_object(req.headers['container'], req.headers['object']))
             
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+            body=  (Connection(authurl =auth_url, user = self.userName,\
+                            key = self.userKey, tenant_name = req.headers['domain']).delete_object(req.headers['container'], req.headers['object']))
+            
+>>>>>>> parent of 32f7b0e... 2013-11-05
 #             print token
 #             self.token = token
 #             print self.token, self.userKey, self.userName
@@ -242,10 +277,13 @@ class AccountController():
         if flag:
             start_response("200 OK", resheaders)
 <<<<<<< HEAD
+<<<<<<< HEAD
             return [str(contianers_in_account),]
         else:
             return ["you are not authenticated"]
 =======
+=======
+>>>>>>> parent of 32f7b0e... 2013-11-05
 #             return [str(contianers_in_account),]
         else:
             start_response("404 FileNotFound", [])
