@@ -77,6 +77,9 @@ class AccountController():
 #             return ["you are not authenticated"]
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
         
         return self.content
@@ -95,11 +98,14 @@ class AccountController():
         return self.content
         
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
         
         return self.content
         
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
     def HEAD(self, environ,start_response):
         req = Request(environ)
         res = Response()
@@ -150,8 +156,11 @@ class AccountController():
     def PUT(self, environ,start_response):
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
@@ -164,6 +173,9 @@ class AccountController():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
         
 =======
         self.content = ''
@@ -171,9 +183,12 @@ class AccountController():
 =======
         self.content = ''
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
         self.content = ''
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
         for n in req.headers:
             if 'X-Auth-User' == n:
                 self.userName = req.headers[n]
@@ -183,14 +198,20 @@ class AccountController():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 
         flag = 1
         contianers_in_account = ''
 =======
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 
         flag = 1
         resheaders = []
@@ -200,6 +221,9 @@ class AccountController():
             auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             
             #     file = open('//Users//adrian//Desktop//scloud.sql','rb')
             #     conn.put_object('haha','scloud.sql',file,headers = {})
@@ -208,8 +232,11 @@ class AccountController():
             
             
 =======
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             
             #     file = open('//Users//adrian//Desktop//scloud.sql','rb')
             #     conn.put_object('haha','scloud.sql',file,headers = {})
@@ -218,8 +245,11 @@ class AccountController():
             
             
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
             for value in resbody:
                 x = (value,resbody[value])
@@ -261,8 +291,11 @@ class AccountController():
         flag = 1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
@@ -274,6 +307,9 @@ class AccountController():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = 'admin').get_account())
             
@@ -293,11 +329,14 @@ class AccountController():
                             key = self.userKey, tenant_name = req.headers['domain']).delete_object(req.headers['container'], req.headers['object']))
             
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
             body=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = req.headers['domain']).delete_object(req.headers['container'], req.headers['object']))
             
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 #             print token
 #             self.token = token
 #             print self.token, self.userKey, self.userName
@@ -310,14 +349,20 @@ class AccountController():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             return [str(contianers_in_account),]
         else:
             return ["you are not authenticated"]
 =======
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 #             return [str(contianers_in_account),]
         else:
             start_response("404 FileNotFound", [])

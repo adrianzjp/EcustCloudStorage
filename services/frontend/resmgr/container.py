@@ -24,8 +24,11 @@ class AccountController():
 class ContainerController():
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
@@ -76,16 +79,22 @@ class ContainerController():
                             key = self.userKey, tenant_name = req.headers['domain']).get_container(req.headers['container']))
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             
             
 =======
             
             
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
             
             
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             for value in headers:
                 x = (value,headers[value])
                 resheaders.append(x)
@@ -158,8 +167,11 @@ class ContainerController():
     def PUT(self, environ,start_response):
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
@@ -172,6 +184,9 @@ class ContainerController():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
         
         for n in req.headers:
             if 'X-Auth-User' == n:
@@ -183,8 +198,11 @@ class ContainerController():
 =======
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
         self.content = ''
         for n in req.headers:
             if 'X-Auth-User' == n:
@@ -242,8 +260,11 @@ class ContainerController():
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
@@ -257,6 +278,9 @@ class ContainerController():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = 'admin').get_account())
 =======
@@ -267,10 +291,13 @@ class ContainerController():
             resbody=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = req.headers['domain']).delete_container(req.headers['container']))
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
             resbody=  (Connection(authurl =auth_url, user = self.userName,\
                             key = self.userKey, tenant_name = req.headers['domain']).delete_container(req.headers['container']))
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             
             
             for value in resbody:
@@ -292,12 +319,18 @@ class ContainerController():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             return ["you are not authenticated"]
 =======
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
             start_response("200 OK", [])
 #             return ["you are not authenticated"]
         

@@ -2,21 +2,30 @@ eclipse.preferences.version=1
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 encoding//api/keystone/client.py=utf-8
 encoding//metadata/auth_metadata.py=utf-8
 =======
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 encoding//api/apiMapping.py=utf-8
 encoding//api/keystone/client.py=utf-8
 encoding//metadata/auth_metadata.py=utf-8
 encoding//proxy/controller.py=utf-8
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
@@ -31,8 +40,11 @@ encoding//services/frontend/resmgr/container.py=utf-8
 encoding//services/frontend/resmgr/domain.py=utf-8
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
+=======
+>>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
 >>>>>>> parent of 32f7b0e... 2013-11-05
 =======
 >>>>>>> parent of 32f7b0e... 2013-11-05
