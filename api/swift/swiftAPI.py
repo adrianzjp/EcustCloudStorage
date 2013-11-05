@@ -1113,7 +1113,7 @@ class Connection(object):
         """Wrapper for :func:`delete_object`"""
         return self._retry(None, delete_object, container, obj)
     
-# from api.keystone import client    
+from api.keystone import client    
 from api.settings import AUTH_URL    
 def test():
 #     conn = Connection(authurl = 'http://192.168.1.115:5000/v2.0/',user = 'adrian',key = '111111',tenant_name = 'adrian')
@@ -1123,22 +1123,8 @@ def test():
 #     aus = client.Client(auth_url=AUTH_URL,username='admin',password='ADMIN',tenant_name='admin')
 #     print aus.users.findall()
     conn = Connection(authurl = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
-#     conn.post_account({'content-length': '5'})d
-
-    for i in (1,2,3,4,5):
-        file = open('/Users/adrian/Desktop/scloud.sql')
-        conn.put_object('haha','scloud'+str(i)+'.sql',file,headers = {})
- 
-    headers, body =  conn.get_container('haha')
-    
-    
-    
-    headers,body =  conn.get_container('haha')
-    for obj in body:
-        print obj
-
-#     conn.get_object(container, obj, resp_chunk_size)
-#     print conn.get_account()
+    conn.put_container('hello', {})
+    print conn.head_account()
 
 #    print aus.tenants.findall()
 #    print conn.get_auth()

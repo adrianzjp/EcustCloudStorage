@@ -25,7 +25,6 @@ class AuthFilter():
         self.userKey = ''
         self.token = ''
         
-        
         for n in req.headers:
             if 'X-Auth-User' == n:
                 self.userName = str(req.headers[n]).strip()
@@ -35,7 +34,7 @@ class AuthFilter():
         try:
             
             auth_url =  str(self.app.global_conf['AUTH_URL']).strip("'")
-            url, self.token =  swiftAPI.Connection(authurl =auth_url, user = self.userName, key = self.userKey, tenant_name = req.headers['domain'])\
+            url, self.token =  swiftAPI.Connection(authurl =auth_url, user = self.userName, key = self.userKey, tenant_name = 'admin')\
             .get_auth()         
                
         except Exception,e:
