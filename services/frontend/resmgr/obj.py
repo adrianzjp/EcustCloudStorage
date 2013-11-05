@@ -9,366 +9,359 @@ import os
 import webob
 from webob import Request
 from webob import Response
+from services.backend.log.log import Log
+import json
+from api.api_map import ApiMapping
 
-# from api.keystone.client import Client
-# from api.keystone import *
-
-from api.swift.swiftAPI import Connection
-from api import settings
+from meta_client import MetaClient
+import datetime
+import hashlib
+import re
 
     
 
-class AccountController():
+class ObjectController():
     def __init__(self, global_conf):
         self.global_conf = global_conf
         self.token = ''
         self.userName = ''
         self.userKey = ''
+        self.content = ''
         pass
-<<<<<<< HEAD
-    def GET(self, req):
-=======
     
     def GET(self, environ,start_response):
-        req = Request(environ)
-        res = Response()
 
-        self.userName = 'x'
-        self.userKey = 'x'
-        self.token = ''
-        
-        for n in req.headers:
-            if 'X-Auth-User' == n:
-                self.userName = req.headers[n]
-            if 'X-Auth-Key' == n:
-                self.userKey = req.headers[n]
-#         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
-
-        flag = 1
-        contianers_in_account = ''
-        resheaders = []
-        try:
-#             def get_auth(url, user, key, tenant_name=None):
-            print self.global_conf['AUTH_URL']
-            auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
-            headers,body=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).get_object(req.headers['container'], req.headers['object']))
-            
-            
-            for value in headers:
-                x = (value,headers[value])
-                resheaders.append(x)
-#                 print value
-            print resheaders
-#             print token
-#             self.token = token
-#             print self.token, self.userKey, self.userName
-        except Exception,e:
-            flag = 0
-            print e
-            pass
-        if flag:
-            start_response("200 OK", resheaders)
-            self.content = str(body)
-#             return [str(contianers_in_account),]
-        else:
-            start_response("404 NoSuchFile", [])
-            self.content = ''
-#             return ["you are not authenticated"]
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
->>>>>>> parent of 32f7b0e... 2013-11-05
-        
-        return self.content
-        
-<<<<<<< HEAD
-        
-        pass
-    
-    
-    
-    def __call__(self,environ,start_response):
-        
-=======
-=======
-        
-        return self.content
-        
->>>>>>> parent of 32f7b0e... 2013-11-05
-<<<<<<< HEAD
-=======
-        
-        return self.content
-        
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-    def HEAD(self, environ,start_response):
-        req = Request(environ)
-        res = Response()
-
-        self.userName = 'x'
-        self.userKey = 'x'
-        self.token = ''
         self.content = ''
-        for n in req.headers:
-            if 'X-Auth-User' == n:
-                self.userName = req.headers[n]
-            if 'X-Auth-Key' == n:
-                self.userKey = req.headers[n]
-#         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
 
-        flag = 1
+        req = Request(environ)
+        res = Response()
+
+        self.userName = req.headers.get('X-Auth-User', '')
+        self.userKey = req.headers.get('X-Auth-Key', '')
+        self.domain = req.headers.get('domain', '')
+        self.object = req.headers.get('object', '')
+        self.meta_rpc = MetaClient()
+        containers_object = req.headers.get('container','')
+        containers_object.append(str(self.object))
+        print containers_object
+        c_len = len(containers_object)# the length of the container
+         
+        parent_id = 0
+         
         resheaders = []
-        try:
-#             def get_auth(url, user, key, tenant_name=None):
-            print self.global_conf['AUTH_URL']
-            auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
-            headers=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).head_object(req.headers['container'], req.headers['object']))
-            
-            
-            for value in headers:
-                x = (value,headers[value])
-                resheaders.append(x)
-#                 print value
-            print resheaders
-#             print token
-#             self.token = token
-#             print self.token, self.userKey, self.userName
-        except Exception,e:
-            flag = 0
-            print e
-            pass
-        if flag:
-            start_response("200 OK", resheaders)
-#             return [str(contianers_in_account),]
-        else:
-            start_response("200 OK", [])
-#             return ["you are not authenticated"]
+        info = '200 OK'
         
+        for i in xrange(c_len):
+            c_name = containers_object[i]
+            print parent_id
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
+            containers_object_get = self.meta_rpc.call(**kwargs)
+            containers_object_dic = json.loads(containers_object_get)
+            
+            #get the container name
+            
+            if len(containers_object_dic) == 0:
+                if i == c_len-1:
+                    info = '404 Object Not Found'
+                else:
+                    info = '404 Container Not Found'
+                break
+            else:
+                if i == c_len-1:
+                    self.object = containers_object_dic[0].get('m_storage_name', '')
+                else:
+                    self.container = containers_object_dic[0].get('m_storage_name', '')
+                    
+                parent_id = containers_object_dic[0].get('id','')
+                
+        if info == '200 OK':
+            try:
+                auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
+                
+                dic = {"auth_url":auth_url, 'user':self.userName, 'key':self.userKey, 'domain_name':self.domain}
+                url, token = ApiMapping().scloud_get_auth(**dic)
+                 
+                dic = {"storage_url":url, 'token':token, 'container':self.container,'headers':{}, \
+                       'object':self.object,}
+                
+                headers, body = ApiMapping().scloud_get_object(**dic)
+                
+                self.content = str(body)
+             
+                Log().info('HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                 
+                for value in headers:
+                    x = (value,headers[value])
+                    resheaders.append(x)
+    #                 print value
+     
+                Log().info('HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                 
+            except Exception,e:
+                info = '404 Object Not Found'
+                print e
+                Log().error('HEAD_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e))
+                import sys
+                print sys.exc_info()
+         
+        start_response(info, resheaders)
+         
         return self.content
         
+        
+    def HEAD(self, environ,start_response):
+        
+        self.content = ''
+
+        req = Request(environ)
+        res = Response()
+
+        self.userName = req.headers.get('X-Auth-User', '')
+        self.userKey = req.headers.get('X-Auth-Key', '')
+        self.domain = req.headers.get('domain', '')
+        self.object = req.headers.get('object', '')
+        self.meta_rpc = MetaClient()
+        containers_object = req.headers.get('container','')
+        containers_object.append(str(self.object))
+        print containers_object
+        c_len = len(containers_object)# the length of the container
+         
+        parent_id = 0
+         
+        resheaders = []
+        info = '200 OK'
+        
+        for i in xrange(c_len):
+            c_name = containers_object[i]
+            print parent_id
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
+            containers_object_get = self.meta_rpc.call(**kwargs)
+            containers_object_dic = json.loads(containers_object_get)
+            
+            #get the container name
+            
+            if len(containers_object_dic) == 0:
+                if i == c_len-1:
+                    info = '404 Object Not Found'
+                else:
+                    info = '404 Container Not Found'
+                break
+            else:
+                if i == c_len-1:
+                    self.object = containers_object_dic[0].get('m_storage_name', '')
+                else:
+                    self.container = containers_object_dic[0].get('m_storage_name', '')
+                    
+                parent_id = containers_object_dic[0].get('id','')
+                
+        if info == '200 OK':
+            try:
+                auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
+                
+                dic = {"auth_url":auth_url, 'user':self.userName, 'key':self.userKey, 'domain_name':self.domain}
+                url, token = ApiMapping().scloud_get_auth(**dic)
+                 
+                dic = {"storage_url":url, 'token':token, 'container':self.container,'headers':{}, \
+                       'object':self.object,}
+                
+                headers = ApiMapping().scloud_head_object(**dic)
+ 
+#             headers,body=  (Connection(authurl =auth_url, user = self.userName,\
+#                             key = self.userKey, tenant_name = req.headers['domain']).get_object(req.headers['container'], req.headers['object']))
+             
+                Log().info('HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                
+                
+#                 here is something that will be excuted after
+#                 这里的response不支持content-length，后面需要解决这个问题！
+                
+                for item in headers.items():
+                    if item[0]!= 'content-length':
+                        resheaders.append(item)
+                        
+                    
+                print resheaders
+     
+                Log().info('HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                 
+            except Exception,e:
+                info = '404 Object Not Found'
+                print e
+                Log().error('HEAD_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e))
+                import sys
+                print sys.exc_info()
+         
+        start_response(info, [ ('accept-ranges', 'bytes'), ('last-modified', 'Mon, 04 Nov 2013 14:42:02 GMT'), ('etag', 'd7d1c51fb2ea6a8d59bd3922f33bf7a7'), ('x-trans-id', 'tx8fadb8db0ea9465c83a0fdb00fa7fb58'), ('date', 'Mon, 04 Nov 2013 14:43:24 GMT'), ('content-type', 'application/octet-stream')])
+         
+        return self.content
+        
+
         
     def PUT(self, environ,start_response):
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
->>>>>>> parent of 32f7b0e... 2013-11-05
+        self.content = ''
         req = Request(environ)
         res = Response()
 
-        self.userName = 'x'
-        self.userKey = 'x'
-        self.token = ''
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
+        self.userName = req.headers.get('X-Auth-User', '')
+        self.userKey = req.headers.get('X-Auth-Key', '')
+        self.domain = req.headers.get('domain', '')
+        self.object = req.headers.get('object', '')
+        self.meta_rpc = MetaClient()
+        containers = req.headers.get('container','')
         
-=======
-        self.content = ''
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
-        self.content = ''
->>>>>>> parent of 32f7b0e... 2013-11-05
-<<<<<<< HEAD
-=======
-        self.content = ''
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-        for n in req.headers:
-            if 'X-Auth-User' == n:
-                self.userName = req.headers[n]
-            if 'X-Auth-Key' == n:
-                self.userKey = req.headers[n]
-#         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-
-        flag = 1
-        contianers_in_account = ''
-=======
-=======
->>>>>>> parent of 32f7b0e... 2013-11-05
-<<<<<<< HEAD
-=======
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-
-        flag = 1
+        c_len = len(containers)# the length of the container
+         
+        parent_id = 0
+         
         resheaders = []
-        try:
-#             def get_auth(url, user, key, tenant_name=None):
-            print self.global_conf['AUTH_URL']
-            auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-            
-            #     file = open('//Users//adrian//Desktop//scloud.sql','rb')
-            #     conn.put_object('haha','scloud.sql',file,headers = {})
-            resbody=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).put_container(req.headers['container']))
-            
-            
-=======
-<<<<<<< HEAD
-=======
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-            
-            #     file = open('//Users//adrian//Desktop//scloud.sql','rb')
-            #     conn.put_object('haha','scloud.sql',file,headers = {})
-            resbody=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).put_container(req.headers['container']))
-            
-            
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
->>>>>>> parent of 32f7b0e... 2013-11-05
-            for value in resbody:
-                x = (value,resbody[value])
-                resheaders.append(x)
-#                 print value
-            print resheaders
-#             print token
-#             self.token = token
-#             print self.token, self.userKey, self.userName
-        except Exception,e:
-            flag = 0
-            print e
-            pass
-        if flag:
-            start_response("200 OK", resheaders)
-#             return [str(contianers_in_account),]
-        else:
-            start_response("200 OK", [])
-#             return ["you are not authenticated"]
+        info = '200 OK'
         
+        for i in xrange(c_len):
+            c_name = containers[i]
+            print parent_id
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
+            containers_get = self.meta_rpc.call(**kwargs)
+            containers_dic = json.loads(containers_get)
+            
+            #get the container name
+            
+            if len(containers_dic) == 0:
+                info = '404 Container Not Found'
+                break
+            else:
+                self.container = containers_dic[0].get('m_storage_name', '')
+                parent_id = containers_dic[0].get('id','')
+                
+        if info == '200 OK':
+            try:
+                auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
+                 
+                sfile = req.body_file
+                 
+                dic = {"auth_url":auth_url, 'user':self.userName, 'key':self.userKey, 'domain_name':self.domain}
+                url, token = ApiMapping().scloud_get_auth(**dic)
+                
+                object_name_construct = self.userName+'_'+str(parent_id)+'_'+self.object+'_'+self.domain+'_'+'object_'+"".join(re.split('\W+', str(datetime.datetime.now())))
+                object_storagename = hashlib.md5(object_name_construct).hexdigest()  
+                 
+                dic = {"storage_url":url, 'token':token, 'container':self.container,'headers':{}, \
+                       'object':object_storagename, 'contents':sfile}
+                object_hash = ApiMapping().scloud_put_object(**dic)
+                
+                kwargs = {
+                                'm_name' : self.object,
+                                'm_storage_name' : object_storagename,
+                                'm_domain_name' : self.domain,
+                                'm_content_type' : 'object',
+                                'm_status' : '1',   #'1' means available, '0' means not available
+                                'm_uri' : object_storagename,
+                                'm_hash' : object_hash ,
+                                'm_size' : '2G',
+                                'm_parent_id' : parent_id,
+                                'created' : str(datetime.datetime.now()),
+                                 
+                                'metadata_opr':'add'#this is for the mq know what kind of opr it is...
+                     
+                    }      
+                    
+                self.meta_rpc.call(**kwargs)
+                
+                for item in kwargs.items():
+                    resheaders.append(item)
+     
+                Log().info('PUT_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                 
+            except Exception,e:
+                info = '500 Internal Error'
+                print e
+                Log().error('PUT_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e))
+                import sys
+                print sys.exc_info()
+         
+        start_response(info, resheaders)
+         
         return self.content
         
         
     def DELETE(self, environ,start_response):
+        self.content = ''
+        
         req = Request(environ)
         res = Response()
 
-        self.userName = 'x'
-        self.userKey = 'x'
-        self.token = ''
-        self.content = ''
-        for n in req.headers:
-            if 'X-Auth-User' == n:
-                self.userName = req.headers[n]
-            if 'X-Auth-Key' == n:
-                self.userKey = req.headers[n]
-#         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
-
-        flag = 1
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
->>>>>>> parent of 32f7b0e... 2013-11-05
+        self.userName = req.headers.get('X-Auth-User', '')
+        self.userKey = req.headers.get('X-Auth-Key', '')
+        self.domain = req.headers.get('domain', '')
+        self.object = req.headers.get('object', '')
+        self.meta_rpc = MetaClient()
+        containers_object = req.headers.get('container','')
+        containers_object.append(str(self.object))
+        print containers_object
+        c_len = len(containers_object)# the length of the container
+         
+        parent_id = 0
+         
         resheaders = []
-        try:
-#             def get_auth(url, user, key, tenant_name=None):
-            print self.global_conf['AUTH_URL']
-            auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-            resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = 'admin').get_account())
-            
-            
-            for value in resbody:
-                x = (value,resbody[value])
-                resheaders.append(x)
-#                 print value
-            print resheaders
-=======
-            body=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).delete_object(req.headers['container'], req.headers['object']))
-            
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
-            body=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).delete_object(req.headers['container'], req.headers['object']))
-            
->>>>>>> parent of 32f7b0e... 2013-11-05
-<<<<<<< HEAD
-=======
-            body=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).delete_object(req.headers['container'], req.headers['object']))
-            
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-#             print token
-#             self.token = token
-#             print self.token, self.userKey, self.userName
-        except Exception,e:
-            flag = 0
-            print e
-            pass
-        if flag:
-            start_response("200 OK", resheaders)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-            return [str(contianers_in_account),]
-        else:
-            return ["you are not authenticated"]
-=======
-=======
->>>>>>> parent of 32f7b0e... 2013-11-05
-<<<<<<< HEAD
-=======
->>>>>>> parent of 32f7b0e... 2013-11-05
-=======
->>>>>>> bccf4e24273a9ca8ccf11519c8bebbdafed2f952
-#             return [str(contianers_in_account),]
-        else:
-            start_response("404 FileNotFound", [])
-#             return ["you are not authenticated"]
+        info = '200 OK'
         
+        for i in xrange(c_len):
+            c_name = containers_object[i]
+            print parent_id
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
+            containers_object_get = self.meta_rpc.call(**kwargs)
+            containers_object_dic = json.loads(containers_object_get)
+            
+            #get the container name
+            
+            if len(containers_object_dic) == 0:
+                if i == c_len-1:
+                    info = '404 Object Not Found'
+                else:
+                    info = '404 Container Not Found'
+                break
+            else:
+                if i == c_len-1:
+                    self.object = containers_object_dic[0].get('m_storage_name', '')
+                else:
+                    self.container = containers_object_dic[0].get('m_storage_name', '')
+                    
+                parent_id = containers_object_dic[0].get('id','')
+                
+        if info == '200 OK':
+            try:
+                auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
+                
+                dic = {"auth_url":auth_url, 'user':self.userName, 'key':self.userKey, 'domain_name':self.domain}
+                url, token = ApiMapping().scloud_get_auth(**dic)
+                 
+                dic = {"storage_url":url, 'token':token, 'container':self.container,'headers':{}, \
+                       'object':self.object,}
+                
+                ApiMapping().scloud_delete_object(**dic)
+                
+                kwargs = {
+                            'id': parent_id,
+                            'metadata_opr':'delete'#this is for the mq know what kind of opr it is...
+                     
+                    }      
+                    
+                self.meta_rpc.call(**kwargs)
+                
+             
+                Log().info('DELETE_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                 
+            except Exception,e:
+                info = '404 Object Not Found'
+                print e
+                Log().error('DELETE_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e))
+                import sys
+                print sys.exc_info()
+         
+        start_response(info, resheaders)
+         
         return self.content
+    
+    
         
     
     def __call__(self,environ,start_response):
@@ -385,11 +378,10 @@ class AccountController():
             
         return [self.content,]
         
->>>>>>> parent of 32f7b0e... 2013-11-05
     @classmethod
     def factory(cls,global_conf,**kwargs):
         print "in ShowVersion.factory", global_conf, kwargs
-        return AccountController(global_conf)
+        return ObjectController(global_conf)
     
     
     

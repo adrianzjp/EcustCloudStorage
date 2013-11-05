@@ -1092,13 +1092,13 @@ class Connection(object):
                                   % (container, obj))
 
         reset_func = _default_reset
-        tell = getattr(contents, 'tell', None)
-        seek = getattr(contents, 'seek', None)
-        if tell and seek:
-            orig_pos = tell()
-            reset_func = lambda *a, **k: seek(orig_pos)
-        elif not contents:
-            reset_func = lambda *a, **k: None
+#         tell = getattr(contents, 'tell', None)
+#         seek = getattr(contents, 'seek', None)
+#         if tell and seek:
+#             orig_pos = tell()
+#             reset_func = lambda *a, **k: seek(orig_pos)
+#         elif not contents:
+#             reset_func = lambda *a, **k: None
 
         return self._retry(reset_func, put_object, container, obj, contents,
                            content_length=content_length, etag=etag,
@@ -1113,7 +1113,7 @@ class Connection(object):
         """Wrapper for :func:`delete_object`"""
         return self._retry(None, delete_object, container, obj)
     
-from api.keystone import client    
+# from api.keystone import client    
 from api.settings import AUTH_URL    
 def test():
 #     conn = Connection(authurl = 'http://192.168.1.115:5000/v2.0/',user = 'adrian',key = '111111',tenant_name = 'adrian')
@@ -1123,27 +1123,23 @@ def test():
 #     aus = client.Client(auth_url=AUTH_URL,username='admin',password='ADMIN',tenant_name='admin')
 #     print aus.users.findall()
     conn = Connection(authurl = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
-<<<<<<< HEAD
-    conn.put_container('hello', {})
-    print conn.head_account()
-=======
 #     conn.post_account({'content-length': '5'})d
 
-    for i in (1,2,3,4,5):
-        file = open('/Users/adrian/Desktop/scloud.sql')
-        conn.put_object('haha','scloud'+str(i)+'.sql',file,headers = {})
- 
-    headers, body =  conn.get_container('haha')
-    
-    
-    
+#     print open('/Users/adrian/Desktop/scloud.sql')
+#     for i in (1,2,3,4,5):
+#         file = open('/Users/adrian/Desktop/scloud.sql')
+#         conn.put_object('haha','scloud'+str(i)+'.sql',file,headers = {})
+#  
+#     headers, body =  conn.get_container('haha')
+#     
+#     
+#     
     headers,body =  conn.get_container('haha')
     for obj in body:
         print obj
 
 #     conn.get_object(container, obj, resp_chunk_size)
 #     print conn.get_account()
->>>>>>> parent of 32f7b0e... 2013-11-05
 
 #    print aus.tenants.findall()
 #    print conn.get_auth()
@@ -1202,4 +1198,8 @@ def test():
     
 if __name__ == '__main__':
     test()
+#     (url, user, key, tenant_name=None)
+    url, token =  get_auth(url = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
+    print get_container(url, token, 'haha')
+    
 

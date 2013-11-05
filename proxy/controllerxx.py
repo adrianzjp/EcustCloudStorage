@@ -29,30 +29,37 @@ class ControllerFilter():
         req = Request(environ)
         res = Response()
         
-        
         self.userName = ''
         self.userKey = ''
         self.token = ''
         
+#         req.headers['space'] = req.headers.get('Host').split('.')[0]
         url_path = req.path.strip('/').split('/')
         
-        if url_path[0]=='scloud_domain':
-            req.headers['domain'] = url_path[1]
-            
-            return self.app(environ,start_response)
         
-        elif url_path[0] == 'scloud_container':
-            req.headers['domain'] = url_path[1]
-            req.headers['container'] = url_path[2:]
-            
-            return self.app(environ,start_response)
+        url_length = len(url_path)
         
-        elif url_path[0] == 'scloud_object':
-            req.headers['domain'] = url_path[1]
-            req.headers['container'] = url_path[2:-1]
-            req.headers['object'] = url_path[-1]
+        
+        if url_length > 1:
+            req.headers['api-version'] = url_path[0]
             
-            return self.app(environ,start_response)
+            if url_length==2:
+                req.headers['domain'] = url_path[1]
+                
+                return self.app(environ,start_response)
+            
+            elif url_length==3:
+                req.headers['domain'] = url_path[1]
+                req.headers['container'] = url_path[2]
+                
+                return self.app(environ,start_response)
+            
+            else:
+                req.headers['domain'] = url_path[1]
+                req.headers['container'] = url_path[2]
+                req.headers['object'] = url_path[url_length-1]
+                
+                return self.app(environ,start_response)
             
         else:
             start_response("403 AccessDenied",[("Content-type", "text/plain"),
