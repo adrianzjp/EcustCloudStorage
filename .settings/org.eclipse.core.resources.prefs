@@ -1,10 +1,21 @@
 eclipse.preferences.version=1
+<<<<<<< HEAD
 encoding//api/keystone/client.py=utf-8
 encoding//metadata/auth_metadata.py=utf-8
+=======
+encoding//api/apiMapping.py=utf-8
+encoding//api/keystone/client.py=utf-8
+encoding//metadata/auth_metadata.py=utf-8
+encoding//proxy/controller.py=utf-8
+>>>>>>> parent of 32f7b0e... 2013-11-05
 encoding//proxy/server.py=utf-8
 encoding//services/frontend/auth/authFilter.py=utf-8
 encoding//services/frontend/auth/authenticate.py=utf-8
 encoding//services/frontend/auth/test.py=utf-8
 encoding//services/frontend/resmgr/account.py=utf-8
 encoding//services/frontend/resmgr/container.py=utf-8
+<<<<<<< HEAD
+=======
+encoding//services/frontend/resmgr/domain.py=utf-8
+>>>>>>> parent of 32f7b0e... 2013-11-05
 encoding//services/frontend/resmgr/obj.py=utf-8

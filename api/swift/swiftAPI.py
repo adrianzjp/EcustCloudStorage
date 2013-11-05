@@ -1123,8 +1123,27 @@ def test():
 #     aus = client.Client(auth_url=AUTH_URL,username='admin',password='ADMIN',tenant_name='admin')
 #     print aus.users.findall()
     conn = Connection(authurl = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
+<<<<<<< HEAD
     conn.put_container('hello', {})
     print conn.head_account()
+=======
+#     conn.post_account({'content-length': '5'})d
+
+    for i in (1,2,3,4,5):
+        file = open('/Users/adrian/Desktop/scloud.sql')
+        conn.put_object('haha','scloud'+str(i)+'.sql',file,headers = {})
+ 
+    headers, body =  conn.get_container('haha')
+    
+    
+    
+    headers,body =  conn.get_container('haha')
+    for obj in body:
+        print obj
+
+#     conn.get_object(container, obj, resp_chunk_size)
+#     print conn.get_account()
+>>>>>>> parent of 32f7b0e... 2013-11-05
 
 #    print aus.tenants.findall()
 #    print conn.get_auth()
