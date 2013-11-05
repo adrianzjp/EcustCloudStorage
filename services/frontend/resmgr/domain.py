@@ -14,9 +14,11 @@ from webob import Response
 # from api.keystone import *
 
 from api.swift.swiftAPI import Connection
+from api.api_map import ApiMapping
+
 from api import settings
 
-    
+from services.backend.log.log import Log    
 
 class DomainController():
     def __init__(self, global_conf):
@@ -31,16 +33,10 @@ class DomainController():
         req = Request(environ)
         res = Response()
 
-        self.userName = 'x'
-        self.userKey = 'x'
+        self.userName = req.headers.get('X-Auth-User', '')
+        self.userKey = req.headers.get('X-Auth-Key', '')
+        self.domain = req.headers.get('domain', '')
         self.token = ''
-        
-        for n in req.headers:
-            if 'X-Auth-User' == n:
-                self.userName = req.headers[n]
-            if 'X-Auth-Key' == n:
-                self.userKey = req.headers[n]
-#         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
 
         flag = 1
         contianers_in_account = ''
@@ -49,9 +45,17 @@ class DomainController():
 #             def get_auth(url, user, key, tenant_name=None):
             print self.global_conf['AUTH_URL']
             auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
-            resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).get_account())
             
+            dic = {"auth_url":auth_url, 'user':self.userName, 'key':self.userKey, 'domain_name':self.domain}
+            url, token = ApiMapping().scloud_get_auth(**dic)
+            dic = {"storage_url":url, 'token':token}
+            resbody,contianers_in_account = ApiMapping().scloud_get_domain(**dic)
+            
+#             resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
+#                             key = self.userKey, tenant_name = req.headers['domain']).get_account())
+            
+            Log().info('GET_DOMAIN by '+self.userName+': '+self.domain)
+
             
             for value in resbody:
                 x = (value,resbody[value])
@@ -63,6 +67,7 @@ class DomainController():
 #             print self.token, self.userKey, self.userName
         except Exception,e:
             flag = 0
+            Log().error('GET_DOMAIN by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+' '+str(e))
             print e
             pass
         if flag:
@@ -79,28 +84,31 @@ class DomainController():
         req = Request(environ)
         res = Response()
 
-        self.userName = 'x'
-        self.userKey = 'x'
-        self.token = ''
         self.content = ''
-        for n in req.headers:
-            if 'X-Auth-User' == n:
-                self.userName = req.headers[n]
-            if 'X-Auth-Key' == n:
-                self.userKey = req.headers[n]
-#         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
+        self.userName = req.headers.get('X-Auth-User', '')
+        self.userKey = req.headers.get('X-Auth-Key', '')
+        self.domain = req.headers.get('domain', '')
 
         flag = 1
-        contianers_in_account = ''
         resheaders = []
         try:
 #             def get_auth(url, user, key, tenant_name=None):
             print self.global_conf['AUTH_URL']
             auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
-            resbody=  (Connection(authurl =auth_url, user = self.userName,\
-                            key = self.userKey, tenant_name = req.headers['domain']).head_account())
             
+#             first we here get url and token
+            dic = {"auth_url":auth_url, 'user':self.userName, 'key':self.userKey, 'domain_name':self.domain}
+            url, token = ApiMapping().scloud_get_auth(**dic)
             
+#             we send the url and token to the api params
+            dic = {"storage_url":url, 'token':token}
+            resbody= ApiMapping().scloud_head_domain(**dic)
+            
+#             resbody=  (Connection(authurl =auth_url, user = self.userName,\
+#                             key = self.userKey, tenant_name = req.headers['domain']).head_account())
+            
+            Log().info('HEAD_DOMAIN by '+self.userName+': '+self.domain)
+
             for value in resbody:
                 x = (value,resbody[value])
                 resheaders.append(x)
@@ -111,6 +119,7 @@ class DomainController():
 #             print self.token, self.userKey, self.userName
         except Exception,e:
             flag = 0
+            Log().error('HEAD_DOMAIN by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+' '+str(e))
             print e
             pass
         if flag:
