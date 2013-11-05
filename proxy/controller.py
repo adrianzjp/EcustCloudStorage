@@ -29,7 +29,6 @@ class ControllerFilter():
         req = Request(environ)
         res = Response()
         
-        
         self.userName = ''
         self.userKey = ''
         self.token = ''
@@ -43,14 +42,14 @@ class ControllerFilter():
         
         elif url_path[0] == 'scloud_container':
             req.headers['domain'] = url_path[1]
-            req.headers['container'] = url_path[2:]
+            req.headers['container'] = url_path[2]
             
             return self.app(environ,start_response)
         
         elif url_path[0] == 'scloud_object':
             req.headers['domain'] = url_path[1]
-            req.headers['container'] = url_path[2:-1]
-            req.headers['object'] = url_path[-1]
+            req.headers['container'] = url_path[2]
+            req.headers['object'] = url_path[3]
             
             return self.app(environ,start_response)
             
@@ -59,7 +58,7 @@ class ControllerFilter():
                                          ])
             return ''
         
-#         print url_path
+        print url_path
         
         
         

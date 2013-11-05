@@ -1092,13 +1092,13 @@ class Connection(object):
                                   % (container, obj))
 
         reset_func = _default_reset
-#         tell = getattr(contents, 'tell', None)
-#         seek = getattr(contents, 'seek', None)
-#         if tell and seek:
-#             orig_pos = tell()
-#             reset_func = lambda *a, **k: seek(orig_pos)
-#         elif not contents:
-#             reset_func = lambda *a, **k: None
+        tell = getattr(contents, 'tell', None)
+        seek = getattr(contents, 'seek', None)
+        if tell and seek:
+            orig_pos = tell()
+            reset_func = lambda *a, **k: seek(orig_pos)
+        elif not contents:
+            reset_func = lambda *a, **k: None
 
         return self._retry(reset_func, put_object, container, obj, contents,
                            content_length=content_length, etag=etag,
@@ -1125,15 +1125,14 @@ def test():
     conn = Connection(authurl = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
 #     conn.post_account({'content-length': '5'})d
 
-#     print open('/Users/adrian/Desktop/scloud.sql')
-#     for i in (1,2,3,4,5):
-#         file = open('/Users/adrian/Desktop/scloud.sql')
-#         conn.put_object('haha','scloud'+str(i)+'.sql',file,headers = {})
-#  
-#     headers, body =  conn.get_container('haha')
-#     
-#     
-#     
+    for i in (1,2,3,4,5):
+        file = open('/Users/adrian/Desktop/scloud.sql')
+        conn.put_object('haha','scloud'+str(i)+'.sql',file,headers = {})
+ 
+    headers, body =  conn.get_container('haha')
+    
+    
+    
     headers,body =  conn.get_container('haha')
     for obj in body:
         print obj
@@ -1198,8 +1197,4 @@ def test():
     
 if __name__ == '__main__':
     test()
-#     (url, user, key, tenant_name=None)
-    url, token =  get_auth(url = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
-    print get_container(url, token, 'haha')
-    
 
