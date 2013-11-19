@@ -53,6 +53,13 @@ class ControllerFilter():
             req.headers['object'] = url_path[-1]
             
             return self.app(environ,start_response)
+        
+        elif url_path[0] == 'scloud_user':
+            req.headers['domain'] = url_path[1]
+            req.headers['container'] = url_path[2:-1]
+            req.headers['object'] = url_path[-1]
+            
+            return self.app(environ,start_response)
             
         else:
             start_response("403 AccessDenied",[("Content-type", "text/plain"),

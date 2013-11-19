@@ -15,6 +15,7 @@ import json
 from api.api_map import ApiMapping
 
 from metadata.data_model import DataLogic
+from metadata.domain_model import DomainLogic
 
 from api.swift.swiftAPI import Connection
 from api import settings
@@ -67,9 +68,11 @@ class ContainerController():
         
         containers = req.headers.get('container','')
         
-        c_len = len(containers)# the length of the container
+        print containers
         
-        parent_id = 0
+        c_len = len(containers)# the length of the container list
+        
+        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
@@ -80,11 +83,11 @@ class ContainerController():
             c_name = containers[i]
             
             # get all the containers corresponding to such conditions    
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
             containers_get = self.meta_rpc.call(**kwargs)
             containers_dic = json.loads(containers_get)
             
-            print c_len
+#             print c_len
             if len(containers_dic) != 0:
                 parent_id = containers_dic[0].get('id','')
                 storage_name = containers_dic[0].get('m_storage_name', '')
@@ -150,7 +153,7 @@ class ContainerController():
         
         c_len = len(containers)# the length of the container
         
-        parent_id = 0
+        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
@@ -161,7 +164,7 @@ class ContainerController():
             c_name = containers[i]
             
             # get all the containers corresponding to such conditions    
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
             containers_get = self.meta_rpc.call(**kwargs)
             containers_dic = json.loads(containers_get)
             
@@ -222,7 +225,7 @@ class ContainerController():
             this PUT method will only find the first not existing container then creat it.
             will Ignore the others containers which does not exist.
             
-            and return the metadata of the new container which contains the metadata of the container
+            and returns the metadata of the new container
         
         '''
         self.content = ''
@@ -238,14 +241,14 @@ class ContainerController():
         
         c_len = len(containers)# the length of the container
         
-        parent_id = 0
+        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
         for i in xrange(c_len):
             c_name = containers[i]
-            print parent_id
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
+            print 'hello'
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
             containers_get = self.meta_rpc.call(**kwargs)
             containers_dic = json.loads(containers_get)
             if len(containers_dic) == 0:
@@ -296,21 +299,31 @@ class ContainerController():
                 print c_name
             else:
                 print 'Containers exists'
+                flag = 2
                 parent_id = containers_dic[0].get('id','')
                 print c_name
 
         
-        if flag:
+        if flag == 1:
             start_response("200 OK", resheaders)
 #             return [str(contianers_in_account),]
+        elif flag == 2:
+            start_response("403 Containers already exists", resheaders)
+            
         else:
-            start_response("200 OK", [])
+            start_response("500 Error", [])
 #             return ["you are not authenticated"]
         
         return self.content
         
         
     def DELETE(self, environ,start_response):
+        
+        '''
+            we propose that if the container contains some objects, then delete operation
+            is forbidden
+        '''
+        
         self.content = ''
         req = Request(environ)
         res = Response()
@@ -325,7 +338,7 @@ class ContainerController():
         
         c_len = len(containers)# the length of the container
         
-        parent_id = 0
+        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
@@ -334,7 +347,7 @@ class ContainerController():
             c_name = containers[i]
             
             # get all the containers corresponding to such conditions    
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
             containers_get = self.meta_rpc.call(**kwargs)
             containers_dic = json.loads(containers_get)
             
@@ -378,6 +391,100 @@ class ContainerController():
         return self.content        
 
     
+        
+    def POST(self, environ,start_response):
+        
+        '''POST can be used to change container metadata
+        like to change container name
+        
+        the curl request like below:
+            
+            curl   -i 
+            -H "original-name:container_old" -H "current-name:container_new"  
+            -H "X-Auth-Key: alex"  
+            -H "X-Auth-User: alex"  
+            http://localhost:8080/scloud_container/alexhello/haha  
+            -X POST
+            
+            container_old is an existing container in haha
+        '''
+        
+        self.content = ''
+        req = Request(environ)
+        res = Response()
+
+        self.userName = req.headers.get('X-Auth-User', '')
+        self.userKey = req.headers.get('X-Auth-Key', '')
+        self.domain = req.headers.get('domain', '')
+        
+        self.original_name = req.headers.get('original-name','')
+        self.current_name = req.headers.get('current-name','')
+        
+        self.meta_rpc = MetaClient()
+
+        containers = req.headers.get('container','')
+        containers.append(self.original_name)
+
+        c_len = len(containers)# the length of the container
+        
+        #initialize the parent_id which is the id of domain
+        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
+        
+        flag = 1
+        resheaders = []
+        
+        if self.original_name == '':
+            start_response("original name required", [])
+            return self.content
+#             flag = 0
+        
+
+        if self.current_name == '':
+            start_response("current name required", [])
+            return self.content
+#             flag = 0
+        
+        for i in xrange(c_len):
+            c_name = containers[i]
+            
+            # get all the containers corresponding to such conditions    
+            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
+            containers_get = self.meta_rpc.call(**kwargs)
+            containers_dic = json.loads(containers_get)
+            
+            if len(containers_dic) != 0:
+                parent_id = containers_dic[0].get('id','')
+
+                if i == c_len-1:
+                    try:
+                        kws = {'m_name':self.current_name, 'metadata_opr':'get',  'm_content_type':'container'}
+                        c_get = self.meta_rpc.call(**kws)
+                        c_dic = json.loads(c_get)
+                        
+                        if len(c_dic) == 0:
+                            kwargs = {'id':parent_id, 'm_name':self.current_name, 'metadata_opr':'update'}
+                            self.meta_rpc.call(**kwargs)
+                        break
+                        
+                    except Exception,e:
+                        flag = 0
+                        Log().error('PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e))
+                        break
+            else:
+                print 'Containers not Found'
+                flag = 0
+
+        
+        if flag:
+            start_response("200 OK", resheaders)
+#             return [str(contianers_in_account),]
+        else:
+            start_response("404 Container Not Found", [])
+#             return ["you are not authenticated"]
+        
+        return self.content        
+
+    
     def __call__(self,environ,start_response):
         
         req = Request(environ)
@@ -389,6 +496,8 @@ class ContainerController():
             self.PUT(environ, start_response)
         if req.method == "DELETE":
             self.DELETE(environ, start_response)
+        if req.method == "POST":
+            self.POST(environ, start_response)
             
         return [self.content,]
         

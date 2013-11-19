@@ -21,8 +21,25 @@ Session = scoped_session(sessionmaker(bind=engine))
 class Data(Base):
     __tablename__ = 'data'
 
-#     path = Column(String, primary_key=True)
-#     name = Column(String)
+    '''
+    mysql> describe data;
+    +----------------+------------------+------+-----+---------+----------------+
+    | Field          | Type             | Null | Key | Default | Extra          |
+    +----------------+------------------+------+-----+---------+----------------+
+    | id             | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+    | m_content_type | varchar(255)     | NO   |     | NULL    |                |
+    | m_parent_id    | int(10) unsigned | NO   |     | 0       |                |
+    | m_name         | varchar(255)     | NO   |     |         |                |
+    | m_storage_name | varchar(255)     | NO   |     |         |                |
+    | m_tenant_name  | varchar(255)     | NO   |     |         |                |
+    | m_status       | varchar(255)     | NO   |     |         |                |
+    | m_url          | varchar(255)     | NO   |     |         |                |
+    | m_hash         | varchar(255)     | NO   |     |         |                |
+    | m_size         | varchar(255)     | NO   |     |         |                |
+    | created        | datetime         | NO   |     | NULL    |                |
+    +----------------+------------------+------+-----+---------+----------------+
+    
+    '''
     id = Column(Integer, primary_key=True)
     m_content_type = Column(String, nullable=False)
     m_parent_id = Column(Integer, nullable=False, default=0)
@@ -113,7 +130,7 @@ if __name__ == '__main__':
     i = 0
     while i < 10:
         kwargs = {
-                      'm_name' : 'hello',
+                      'm_name' : '111',
                       'm_storage_name' : 'haha',
                       'm_domain_name' : 'adrian',
                       'm_content_type' : 'obj',

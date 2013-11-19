@@ -19,9 +19,9 @@ def test():
     dic = {"auth_url":AUTH_URL, 'user':'admin', 'key':'ADMIN', 'domain_name':'admin'}
     url, token = scloud_api.scloud_get_auth(**dic)
     
-    file = open('/Users/adrian/Desktop/scloud.sql')
+#     file = open('/Users/adrian/Desktop/scloud.sql') 
     dic = {"storage_url":url, 'token':token, 'container':'5','headers':{'hello':'df'}, \
-           'object':'1234ddd6.sql','contents':file}
+           'object':'1234ddd6.sql'}
     containers = scloud_api.scloud_get_domain(**dic)[1]
     for c in containers:
         print c.get('name')
@@ -51,5 +51,5 @@ def find_all_containers():
     
     
 if __name__ == "__main__":
-#     test()
-    find_all_containers()
+    test()
+#     find_all_containers()

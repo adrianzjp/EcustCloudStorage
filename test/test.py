@@ -1,11 +1,13 @@
-# -*- coding: utf-8 -*-
-'''
-Created on 2013年10月29日
+import eventlet
 
-@author: adrian
-'''
-import json
+def handle(client):
+    while True:
+        c = client.recv(1)
+        if not c: break
+        client.sendall(c)
 
-
-teststr = "{'hello': 2, 'haha': 'haha'}"
-print json.loads(teststr).get('hello')
+server = eventlet.listen(('0.0.0.0', 6000))
+pool = eventlet.GreenPool(10000)
+while True:
+    new_sock, address = server.accept()
+    pool.spawn_n(handle, new_sock)

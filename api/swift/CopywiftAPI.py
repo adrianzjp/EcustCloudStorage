@@ -19,11 +19,14 @@
 Cloud Files client library used internally
 """
 
+
+
 import socket
 import os
 import logging
 import sys
 
+sys.path.append('/Users/adrian/Dropbox/workspace/EcustCloudStorage')
 
 from urllib import quote as _quote
 #from urlparse import urlparse, urlunparse
@@ -1122,15 +1125,15 @@ def test():
     
 #     aus = client.Client(auth_url=AUTH_URL,username='admin',password='ADMIN',tenant_name='admin')
 #     print aus.users.findall()
-    conn = Connection(authurl = AUTH_URL,user = 'alex',key = 'alex',tenant_name = 'alexdomain')
-    conn.head_account()
-#     conn = Connection(authurl = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
+    conn = Connection(authurl = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
 #     conn.post_account({'content-length': '5'})d
 
 #     print open('/Users/adrian/Desktop/scloud.sql')
 #     for i in (1,2,3,4,5):
-#     file = open('/Users/adrian/Downloads/ubuntu-12.04.3-server-amd64.iso')
-#     conn.put_object('haha','ubuntu-12.04.3-server-amd64.iso',file,headers = {})
+    file = open('/Users/adrian/Downloads/ubuntu-12.04.3-server-amd64.iso')
+    conn.put_object('haha','buble.html',file,headers = {})
+#     for filex in conn.get_container('haha')[1]:
+#         print filex.get('name')
 #  
 #     headers, body =  conn.get_container('haha')
 #     

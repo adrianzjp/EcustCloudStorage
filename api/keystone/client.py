@@ -156,26 +156,16 @@ if __name__ == '__main__':
     
     print '下面是关于users类的相关操作结果:'
     print 'users.findall()','-'*100
-    print len(aus.users.findall())
-    
-    
-#     for n in aus.users.findall():
-#         print n.name
-#         if n.name == 'abc':
-#             print n.id
-    roles = [r.name for r in aus.roles.findall()]
-    
-    print roles
-
-    print 'users.find()','-'*100
-    print aus.users.find()
-    
-#     print 'users.get()','-'*100
-#     print aus.users.get('0db1af58675f4a14982b4f5b63afa9d5')
+    print '[ the length of the user list is' , len(aus.users.findall()), ']'
+    print [u.name for u in aus.users.findall()]
     
     print 'roles.findall()','-'*100
+    print [r.name for r in aus.roles.findall()]
     
-    print aus.roles.findall()
+    print 'tenants.findall()','-'*100
+    
+    print [t.name for t in aus.tenants.findall()]
+    
     
     
 #     pring aus.users.update_enabled(user, enabled)

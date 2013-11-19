@@ -6,7 +6,6 @@ Created on 2013年9月11日
 '''
 '''
 Created on 2011-6-12
-@author: Sonic
 '''
 import os
 import webob

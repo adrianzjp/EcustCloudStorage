@@ -41,11 +41,11 @@ class MetaClient(object):
                                    body=meta_json)
         while self.response is None:
             self.connection.process_data_events()
-        return self.response
+        print self.response
 
 for i in xrange(5):
     meta_rpc = MetaClient()
-    kwargs = {'id': '54', 'metadata_opr':'get'}
+    kwargs = {'id': '48', 'metadata_opr':'get'}
     
     print meta_rpc.call(**kwargs)
 
