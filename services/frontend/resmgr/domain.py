@@ -9,6 +9,7 @@ import os
 import webob
 from webob import Request
 from webob import Response
+import json
 
 # from api.keystone.client import Client
 # from api.keystone import *
@@ -17,6 +18,9 @@ from api.swift.swiftAPI import Connection
 from api.api_map import ApiMapping
 
 from api import settings
+
+from meta_client import MetaClient
+
 
 from services.backend.log.log import Log    
 
@@ -37,6 +41,8 @@ class DomainController():
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
         self.token = ''
+        self.meta_rpc = MetaClient()
+
 
         flag = 1
         contianers_in_account = ''
@@ -51,17 +57,28 @@ class DomainController():
             dic = {"storage_url":url, 'token':token}
             resbody,contianers_in_account = ApiMapping().scloud_get_domain(**dic)
             
-#             resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
-#                             key = self.userKey, tenant_name = req.headers['domain']).get_account())
+            print contianers_in_account
             
-            Log().info('GET_DOMAIN by '+self.userName+': '+self.domain)
+            '''
+            codes below to change the storage_name to logical name
+            '''
+            
+#             for container in contianers_in_account:
+#                 kwargs = {'m_storage_name':container.get('name'), 'metadata_opr':'get', 'm_content_type':'container'}
+#                 containers_get = self.meta_rpc.call(**kwargs)
+#                 containers_dic = json.loads(containers_get)
+#                 c_logic_name = containers_dic[0].get('m_name')
+#                 container['name'] = c_logic_name
+#             
+#             Log().info('GET_DOMAIN by '+self.userName+': '+self.domain)
 
             
             for value in resbody:
-                x = (value,resbody[value])
-                resheaders.append(x)
+                if value != 'content-length':
+                    x = (value,resbody[value])
+                    resheaders.append(x)
+            
 #                 print value
-            print resheaders
 #             print token
 #             self.token = token
 #             print self.token, self.userKey, self.userName
@@ -71,14 +88,20 @@ class DomainController():
             print e
             pass
         if flag:
+            self.content = repr(contianers_in_account)
+            content_length = ('content-length', str(len(self.content)))
+            resheaders.append(content_length)
+
             start_response("200 OK", resheaders)
-            self.content = str(contianers_in_account)
+            
+            
+            
 #             return [str(contianers_in_account),]
         else:
             self.content = 'you are not authenticated'
 #             return ["you are not authenticated"]
         
-        return self.content
+#         return self.content
         
     def HEAD(self, environ,start_response):
         req = Request(environ)
@@ -141,50 +164,7 @@ class DomainController():
         if req.method == "HEAD":
             self.HEAD(environ, start_response)
             
-        return [self.content,]
-#         req = Request(environ)
-#         res = Response()
-#  
-#         self.userName = 'x'
-#         self.userKey = 'x'
-#         self.token = ''
-#          
-#         for n in req.headers:
-#             if 'X-Auth-User' == n:
-#                 self.userName = req.headers[n]
-#             if 'X-Auth-Key' == n:
-#                 self.userKey = req.headers[n]
-# #         aus = Client(auth_url=settings.AUTH_URL,username='admin',password='ADMIN')
-#  
-#         flag = 1
-#         contianers_in_account = ''
-#         resheaders = []
-#         try:
-# #             def get_auth(url, user, key, tenant_name=None):
-#             print self.global_conf['AUTH_URL']
-#             auth_url =  str(self.global_conf['AUTH_URL']).strip("'")
-#             resbody,contianers_in_account=  (Connection(authurl =auth_url, user = self.userName,\
-#                             key = self.userKey, tenant_name = 'admin').get_account())
-#              
-#              
-#             for value in resbody:
-#                 x = (value,resbody[value])
-#                 resheaders.append(x)
-# #                 print value
-# #             resheaders.append(('token',str(req.headers['token'])))
-#             print resheaders
-# #             print token
-# #             self.token = token
-# #             print self.token, self.userKey, self.userName
-#         except Exception,e:
-#             flag = 0
-#             print e
-#             pass
-#         if flag:
-# #             start_response("200 OK", resheaders)
-#             return [str(contianers_in_account),]
-#         else:
-#             return ["you are not authenticated"]
+        return [self.content]
         
     @classmethod
     def factory(cls,global_conf,**kwargs):

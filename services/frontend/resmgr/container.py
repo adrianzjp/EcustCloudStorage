@@ -34,7 +34,7 @@ import hashlib
 class ContainerController():
     '''
     对于container的操作这里包含四个：
-    PUT, GET, HEAD, DELETE
+    PUT, GET, HEAD, DELETE, POST
     
     这里使用metadata封装数据，实现了文件夹的嵌套功能。
     

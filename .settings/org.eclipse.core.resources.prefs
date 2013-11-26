@@ -28,6 +28,7 @@ encoding//services/frontend/resmgr/server.py=utf-8
 encoding//services/frontend/usermgr/user.py=utf-8
 encoding//test/1_receive.py=utf-8
 encoding//test/1_send.py=utf-8
+encoding//test/cloud_test_python.py=utf-8
 encoding//test/emi_log_direct.py=utf-8
 encoding//test/emit_log.py=utf-8
 encoding//test/emit_log_topic.py=utf-8

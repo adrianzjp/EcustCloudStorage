@@ -1,1 +1,60 @@
-2013-11-19 20:21:06,706 - INFO: PUT_OBJECT by alex: alexhello/07bf0a9e22e5ddf8a037b4e1380c4a8a/love.html
+2013-11-25 14:43:25,693 - INFO: abc authorized logging in
+2013-11-25 14:43:25,694 - INFO: Connecting to ::1:5672
+2013-11-25 14:44:07,532 - INFO: abc authorized logging in
+2013-11-25 14:44:07,533 - INFO: Connecting to ::1:5672
+2013-11-25 14:44:24,057 - INFO: abc authorized logging in
+2013-11-25 14:44:24,058 - INFO: Connecting to ::1:5672
+2013-11-25 14:44:46,154 - INFO: abc authorized logging in
+2013-11-25 14:44:46,155 - INFO: Connecting to ::1:5672
+2013-11-26 20:42:18,624 - INFO: abc authorized logging in
+2013-11-26 20:42:18,630 - INFO: Connecting to ::1:5672
+2013-11-26 20:54:14,510 - INFO: abc authorized logging in
+2013-11-26 20:54:14,512 - INFO: Connecting to ::1:5672
+2013-11-26 20:54:27,371 - INFO: abc authorized logging in
+2013-11-26 20:54:27,372 - INFO: Connecting to ::1:5672
+2013-11-26 20:57:29,364 - INFO: admin authorized logging in
+2013-11-26 20:57:29,365 - INFO: Connecting to ::1:5672
+2013-11-26 21:09:43,400 - INFO: admin authorized logging in
+2013-11-26 21:09:43,401 - INFO: Connecting to ::1:5672
+2013-11-26 21:10:03,705 - INFO: admin authorized logging in
+2013-11-26 21:10:03,706 - INFO: Connecting to ::1:5672
+2013-11-26 21:10:30,602 - INFO: admin authorized logging in
+2013-11-26 21:10:30,603 - INFO: Connecting to ::1:5672
+2013-11-26 21:11:39,334 - INFO: admin authorized logging in
+2013-11-26 21:11:39,335 - INFO: Connecting to ::1:5672
+2013-11-26 21:12:22,458 - INFO: admin authorized logging in
+2013-11-26 21:12:22,459 - INFO: Connecting to ::1:5672
+2013-11-26 21:21:48,296 - INFO: admin authorized logging in
+2013-11-26 21:21:48,297 - INFO: Connecting to ::1:5672
+2013-11-26 21:24:14,218 - INFO: admin authorized logging in
+2013-11-26 21:24:14,219 - INFO: Connecting to ::1:5672
+2013-11-26 21:24:33,277 - INFO: admin authorized logging in
+2013-11-26 21:24:33,278 - INFO: Connecting to ::1:5672
+2013-11-26 21:30:50,252 - INFO: admin authorized logging in
+2013-11-26 21:30:50,253 - INFO: Connecting to ::1:5672
+2013-11-26 21:31:08,694 - INFO: admin authorized logging in
+2013-11-26 21:31:08,695 - INFO: Connecting to ::1:5672
+2013-11-26 21:31:34,881 - INFO: admin authorized logging in
+2013-11-26 21:31:34,882 - INFO: Connecting to ::1:5672
+2013-11-26 21:32:20,235 - INFO: admin authorized logging in
+2013-11-26 21:32:20,237 - INFO: Connecting to ::1:5672
+2013-11-26 21:35:02,284 - INFO: admin authorized logging in
+2013-11-26 21:35:02,285 - INFO: Connecting to ::1:5672
+2013-11-26 21:35:38,051 - INFO: admin authorized logging in
+2013-11-26 21:35:38,052 - INFO: Connecting to ::1:5672
+2013-11-26 21:35:52,656 - INFO: admin authorized logging in
+2013-11-26 21:35:52,657 - INFO: Connecting to ::1:5672
+2013-11-26 21:42:34,070 - INFO: admin authorized logging in
+2013-11-26 21:42:34,072 - INFO: Connecting to ::1:5672
+2013-11-26 21:43:39,837 - INFO: admin authorized logging in
+2013-11-26 21:43:39,838 - INFO: Connecting to ::1:5672
+2013-11-26 21:45:27,474 - INFO: admin authorized logging in
+2013-11-26 21:45:27,475 - INFO: Connecting to ::1:5672
+2013-11-26 21:45:41,405 - INFO: admin authorized logging in
+2013-11-26 21:45:41,406 - INFO: Connecting to ::1:5672
+2013-11-26 21:53:28,338 - INFO: admin authorized logging in
+2013-11-26 21:53:28,339 - INFO: Connecting to ::1:5672
+2013-11-26 21:53:57,083 - INFO: admin authorized logging in
+2013-11-26 21:53:57,084 - INFO: Connecting to ::1:5672
+2013-11-26 22:08:31,028 - INFO: admin authorized logging in
+2013-11-26 22:08:31,029 - INFO: Connecting to ::1:5672
