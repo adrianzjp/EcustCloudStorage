@@ -7,8 +7,10 @@ Created on 2013年10月28日
 import pika
 import sys
 import json
+
+'''codes added to run in command'''
 # for mac
-sys.path.append('/Users/adrian/Dropbox/workspace/EcustCloudStorage')
+# sys.path.append('/Users/adrian/Dropbox/workspace/EcustCloudStorage')
 #for windows
 # sys.path.append('C:\Users\jipingzh\Dropbox\workspace\EcustCloudStorage')
 

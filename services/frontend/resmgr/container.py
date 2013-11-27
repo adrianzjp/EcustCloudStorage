@@ -107,13 +107,26 @@ class ContainerController():
 #                         ApiMapping().scloud_delete_container(**dic)
                         headers, content = ApiMapping().scloud_get_container(**dic)
                         
+                        '''
+                        codes below to change the storage_name to logical name
+                        '''
+                        
+                        for container in content:
+                            kwargs = {'m_storage_name':container.get('name'), 'metadata_opr':'get'}
+                            containers_get = self.meta_rpc.call(**kwargs)
+                            containers_dic = json.loads(containers_get)
+                            if len(containers_dic) != 0:
+                                c_logic_name = containers_dic[0].get('m_name')
+                                container['name'] = c_logic_name
+                                
                         self.content = str(content)
-            
+
                         Log().info('GET_CONTAINER by '+self.userName+': '+self.domain+'/'+c_name)
                         
                         for value in headers:
-                            x = (value,headers[value])
-                            resheaders.append(x)
+                            if value != 'content-length':
+                                x = (value,headers[value])
+                                resheaders.append(x)
             #                 print value
 
                         break
@@ -126,16 +139,18 @@ class ContainerController():
                 print 'Containers not Found'
                 flag = 0
 
-        
         if flag:
+            content_length = ('content-length', str(len(self.content)))
+            resheaders.append(content_length)
             start_response("200 OK", resheaders)
-
 #             return [str(contianers_in_account),]
         else:
-            start_response("404 Container Not Found", [])
+            self.content = 'you are not authenticated'
+            content_length = ('content-length', str(len(self.content)))
+            resheaders.append(content_length)
+            start_response("403 not authenticated", resheaders)
 #             return ["you are not authenticated"]
         
-        return self.content           
 
         
     def HEAD(self, environ,start_response):

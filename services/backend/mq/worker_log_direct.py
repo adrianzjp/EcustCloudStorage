@@ -27,7 +27,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
 channel = connection.channel()
 
 channel.exchange_declare(exchange='direct_meg',
-                         type='direct')
+                         type='fanout')
 
 result = channel.queue_declare(exclusive=True)
 queue_name = result.method.queue

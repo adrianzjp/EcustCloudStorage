@@ -63,14 +63,15 @@ class DomainController():
             codes below to change the storage_name to logical name
             '''
             
-#             for container in contianers_in_account:
-#                 kwargs = {'m_storage_name':container.get('name'), 'metadata_opr':'get', 'm_content_type':'container'}
-#                 containers_get = self.meta_rpc.call(**kwargs)
-#                 containers_dic = json.loads(containers_get)
-#                 c_logic_name = containers_dic[0].get('m_name')
-#                 container['name'] = c_logic_name
-#             
-#             Log().info('GET_DOMAIN by '+self.userName+': '+self.domain)
+            for container in contianers_in_account:
+                kwargs = {'m_storage_name':container.get('name'), 'metadata_opr':'get', 'm_content_type':'container'}
+                containers_get = self.meta_rpc.call(**kwargs)
+                containers_dic = json.loads(containers_get)
+                if len(containers_dic) != 0:
+                    c_logic_name = containers_dic[0].get('m_name')
+                    container['name'] = c_logic_name
+             
+            Log().info('GET_DOMAIN by '+self.userName+': '+self.domain)
 
             
             for value in resbody:
@@ -86,20 +87,19 @@ class DomainController():
             flag = 0
             Log().error('GET_DOMAIN by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+' '+str(e))
             print e
-            pass
+            
+        
         if flag:
             self.content = repr(contianers_in_account)
             content_length = ('content-length', str(len(self.content)))
             resheaders.append(content_length)
-
             start_response("200 OK", resheaders)
-            
-            
-            
 #             return [str(contianers_in_account),]
         else:
             self.content = 'you are not authenticated'
-#             return ["you are not authenticated"]
+            content_length = ('content-length', str(len(self.content)))
+            resheaders.append(content_length)
+            start_response("403 not authenticated", resheaders)
         
 #         return self.content
         
