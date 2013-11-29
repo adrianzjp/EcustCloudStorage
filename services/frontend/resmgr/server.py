@@ -11,12 +11,14 @@ from webob import Request
 from webob import Response
 
 import obj
-
-# from api.keystone.client import Client
-# from api.keystone import *
+import container
+import capability
+import domain
 
 from api.swift.swiftAPI import Connection
 from api import settings
+
+from proxy.params import *
 
     
 

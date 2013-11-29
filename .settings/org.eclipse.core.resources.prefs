@@ -7,6 +7,7 @@ encoding//metadata/auth_metadata.py=utf-8
 encoding//metadata/dataTest.py=utf-8
 encoding//proxy/controller.py=utf-8
 encoding//proxy/controllerxx.py=utf-8
+encoding//proxy/params.py=utf-8
 encoding//proxy/server.py=utf-8
 encoding//services/backend/log/log.py=utf-8
 encoding//services/backend/monitor/sys_monitor.py=utf-8
