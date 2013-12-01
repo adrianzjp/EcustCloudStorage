@@ -99,4 +99,6 @@ HTTPBadGateway = status_map[502]
 HTTPServiceUnavailable = status_map[503]
 HTTPInsufficientStorage = status_map[507]
 
-print HTTPBadRequest
+
+LogFilePath = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/services/backend/log/log.txt'
+

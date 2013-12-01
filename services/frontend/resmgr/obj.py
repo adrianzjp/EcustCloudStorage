@@ -13,7 +13,7 @@ from services.backend.log.log import Log
 import json
 from api.api_map import ApiMapping
 
-from meta_client import MetaClient
+from rpc import Rpc
 from metadata.domain_model import DomainLogic
 
 
@@ -43,14 +43,14 @@ class ObjectController():
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
         self.object = req.headers.get('object', '')
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
         containers_object = req.headers.get('container','')
         containers_object.append(str(self.object))
         print containers_object
         c_len = len(containers_object)# the length of the container
          
         parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
-         
+        
         resheaders = []
         info = '200 OK'
         
@@ -58,7 +58,7 @@ class ObjectController():
             c_name = containers_object[i]
             print parent_id
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
-            containers_object_get = self.meta_rpc.call(**kwargs)
+            containers_object_get = self.rpc.call('meta_queue', **kwargs)
             containers_object_dic = json.loads(containers_object_get)
             
             #get the container name
@@ -90,20 +90,17 @@ class ObjectController():
                 headers, body = ApiMapping().scloud_get_object(**dic)
                 
                 self.content = str(body)
-             
-                Log().info('HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                log_dic = {"log_flag":"info", "content":'GET_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object}
+                self.rpc.cast('logs', json.dumps(log_dic))
                  
                 for value in headers:
                     x = (value,headers[value])
                     resheaders.append(x)
-    #                 print value
-     
-                Log().info('HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
                  
             except Exception,e:
                 info = '404 Object Not Found'
-                print e
-                Log().error('HEAD_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e))
+                log_dic = {"log_flag":"error", "content":'GET_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e)}
+                self.rpc.cast('logs', json.dumps(log_dic))
                 import sys
                 print sys.exc_info()
          
@@ -123,7 +120,7 @@ class ObjectController():
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
         self.object = req.headers.get('object', '')
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
         containers_object = req.headers.get('container','')
         containers_object.append(str(self.object))
         print containers_object
@@ -138,7 +135,7 @@ class ObjectController():
             c_name = containers_object[i]
             print parent_id
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
-            containers_object_get = self.meta_rpc.call(**kwargs)
+            containers_object_get = self.rpc.call('meta_queue', **kwargs)
             containers_object_dic = json.loads(containers_object_get)
             
             #get the container name
@@ -171,8 +168,8 @@ class ObjectController():
  
 #             headers,body=  (Connection(authurl =auth_url, user = self.userName,\
 #                             key = self.userKey, tenant_name = req.headers['domain']).get_object(req.headers['container'], req.headers['object']))
-             
-                Log().info('HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                log_dic = {"log_flag":"info", "content":'HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object}
+                self.rpc.cast('logs', json.dumps(log_dic))
                 
                 
 #                 here is something that will be excuted after
@@ -185,12 +182,12 @@ class ObjectController():
                     
                 print resheaders
      
-                Log().info('HEAD_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
                  
             except Exception,e:
                 info = '404 Object Not Found'
                 print e
-                Log().error('HEAD_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e))
+                log_dic = {"log_flag":"error", "content":'HEAD_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e)}
+                self.rpc.cast('logs', json.dumps(log_dic))
                 import sys
                 print sys.exc_info()
          
@@ -209,7 +206,7 @@ class ObjectController():
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
         self.object = req.headers.get('object', '')
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
         containers = req.headers.get('container','')
         
         c_len = len(containers)# the length of the container
@@ -223,7 +220,7 @@ class ObjectController():
             c_name = containers[i]
             print parent_id
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
-            containers_get = self.meta_rpc.call(**kwargs)
+            containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
             #get the container name
@@ -237,7 +234,7 @@ class ObjectController():
                 
         if info == '200 OK':
             kwargs = {'m_name':self.object, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'object'}
-            object_get = self.meta_rpc.call(**kwargs)
+            object_get = self.rpc.call('meta_queue', **kwargs)
             object_dic = json.loads(object_get)
             
             #get the object name
@@ -278,17 +275,18 @@ class ObjectController():
                      
                     }      
                     
-                self.meta_rpc.call(**kwargs)
+                self.rpc.call('meta_queue', **kwargs)
                 
                 for item in kwargs.items():
                     resheaders.append(item)
-     
-                Log().info('PUT_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                log_dic = {"log_flag":"info", "content":'PUT_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object}
+                self.rpc.cast('logs', json.dumps(log_dic))
                  
             except Exception,e:
                 info = '500 Internal Error'
                 print e
-                Log().error('PUT_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e))
+                log_dic = {"log_flag":"error", "content":'PUT_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e)}
+                self.rpc.cast('logs', json.dumps(log_dic))
                 import sys
                 print sys.exc_info()
          
@@ -307,7 +305,7 @@ class ObjectController():
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
         self.object = req.headers.get('object', '')
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
         containers_object = req.headers.get('container','')
         containers_object.append(str(self.object))
         print containers_object
@@ -322,7 +320,7 @@ class ObjectController():
             c_name = containers_object[i]
             print parent_id
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id}
-            containers_object_get = self.meta_rpc.call(**kwargs)
+            containers_object_get = self.rpc.call('meta_queue', **kwargs)
             containers_object_dic = json.loads(containers_object_get)
             
             #get the container name
@@ -359,15 +357,16 @@ class ObjectController():
                      
                     }      
                     
-                self.meta_rpc.call(**kwargs)
+                self.rpc.call('meta_queue', **kwargs)
                 
-             
-                Log().info('DELETE_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object)
+                log_dic = {"log_flag":"info", "content":'DELETE_OBJECT by '+self.userName+': '+self.domain+'/'+self.container+'/'+self.object}
+                self.rpc.cast('logs', json.dumps(log_dic))
                  
             except Exception,e:
                 info = '404 Object Not Found'
                 print e
-                Log().error('DELETE_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e))
+                log_dic = {"log_flag":"error", "content":'DELETE_OBJECT by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+self.container+'/'+req.headers['object']+' '+str(e)}
+                self.rpc.cast('logs', json.dumps(log_dic))
                 import sys
                 print sys.exc_info()
          
@@ -401,7 +400,7 @@ class ObjectController():
         self.original_name = req.headers.get('object','')
         self.current_name = req.headers.get('current-name','')
         
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
 
         containers = req.headers.get('container','')
 #         containers.append(self.original_name)#here object added to the container lists
@@ -414,12 +413,6 @@ class ObjectController():
         flag = 1
         resheaders = []
         
-        if self.original_name == '':
-            start_response("original name required", [])
-            return self.content
-#             flag = 0
-        
-
         if self.current_name == '':
             start_response("current name required", [])
             return self.content
@@ -432,7 +425,7 @@ class ObjectController():
             
             # get all the containers corresponding to such conditions    
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
-            containers_get = self.meta_rpc.call(**kwargs)
+            containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
             if len(containers_dic) != 0:
@@ -440,25 +433,26 @@ class ObjectController():
                 if i == c_len-1:
                     try:
                         kws = {'m_name':self.original_name, 'm_parent_id':parent_id, 'metadata_opr':'get',  'm_content_type':'object'}
-                        o_get = self.meta_rpc.call(**kws)
+                        o_get = self.rpc.call('meta_queue', **kws)
                         o_dic = json.loads(o_get)
                         
                         object_id = o_dic[0].get('id','')
                         print object_id
                         if len(o_dic) != 0:
                             kws = {'m_name':self.current_name, 'm_parent_id':parent_id, 'metadata_opr':'get',  'm_content_type':'object'}
-                            o_get = self.meta_rpc.call(**kws)
+                            o_get = self.rpc.call('meta_queue', **kws)
                             o_dic = json.loads(o_get)
                             
                             if len(o_dic) == 0:
                                 kwargs = {'id':object_id, 'm_name':self.current_name, 'metadata_opr':'update'}
-                                self.meta_rpc.call(**kwargs)
+                                self.rpc.call('meta_queue', **kwargs)
                         break
                         
                     except Exception,e:
                         
                         flag = 0
-                        Log().error('PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e))
+                        log_dic = {"log_flag":"error", "content":'PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e)}
+                        self.rpc.cast('logs', json.dumps(log_dic))
                         break
             else:
                 print 'Containers or Objects not Found'

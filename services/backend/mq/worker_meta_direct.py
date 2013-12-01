@@ -10,7 +10,7 @@ import json
 
 '''codes added to run in command'''
 # for mac
-# sys.path.append('/Users/adrian/Dropbox/workspace/EcustCloudStorage')
+sys.path.append('/Users/adrian/Dropbox/workspace/EcustCloudStorage')
 #for windows
 # sys.path.append('C:\Users\jipingzh\Dropbox\workspace\EcustCloudStorage')
 
@@ -33,9 +33,8 @@ channel.queue_declare(queue='meta_queue')
 
 def on_request(ch, method, props, body):
     mes_dic = json.loads(body)
-    print mes_dic
     opr = mes_dic.pop('metadata_opr')
-    print opr
+    
     if 'add' == opr:
         response = DataLogic().add_data(**mes_dic)
     #     delete a data by id
@@ -44,7 +43,7 @@ def on_request(ch, method, props, body):
     #     update data by id   
     if 'update' == opr:
         response = DataLogic().update_data_by_id(**mes_dic)
-    # #     get data by conditions
+    #     get data by conditions
     if 'get' == opr:
         response = DataLogic().get_by_kwargs(**mes_dic)
         

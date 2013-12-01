@@ -23,9 +23,8 @@ from api import settings
 from services.backend.log.log import Log
 import datetime
 
-from emit_messages import EmitMeg
 
-from meta_client import MetaClient
+from rpc import Rpc
 
 import re
 import hashlib
@@ -63,7 +62,7 @@ class ContainerController():
         self.userName = req.headers.get('X-Auth-User', '')
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
 
         
         containers = req.headers.get('container','')
@@ -84,7 +83,7 @@ class ContainerController():
             
             # get all the containers corresponding to such conditions    
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
-            containers_get = self.meta_rpc.call(**kwargs)
+            containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
 #             print c_len
@@ -113,15 +112,15 @@ class ContainerController():
                         
                         for container in content:
                             kwargs = {'m_storage_name':container.get('name'), 'metadata_opr':'get'}
-                            containers_get = self.meta_rpc.call(**kwargs)
+                            containers_get = self.rpc.call('meta_queue', **kwargs)
                             containers_dic = json.loads(containers_get)
                             if len(containers_dic) != 0:
                                 c_logic_name = containers_dic[0].get('m_name')
                                 container['name'] = c_logic_name
                                 
                         self.content = str(content)
-
-                        Log().info('GET_CONTAINER by '+self.userName+': '+self.domain+'/'+c_name)
+                        log_dic = {"log_flag":"info", "content":'GET_CONTAINER by '+self.userName+': '+self.domain+'/'+c_name}
+                        self.rpc.cast('logs', json.dumps(log_dic)) 
                         
                         for value in headers:
                             if value != 'content-length':
@@ -133,11 +132,13 @@ class ContainerController():
                         
                     except Exception,e:
                         flag = 0
-                        Log().error('PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e))
+                        log_dic = {"log_flag":"error", "content":'PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e)}
+                        self.rpc.cast('logs', json.dumps(log_dic)) 
                         break
             else:
                 print 'Containers not Found'
                 flag = 0
+            
 
         if flag:
             content_length = ('content-length', str(len(self.content)))
@@ -150,7 +151,7 @@ class ContainerController():
             resheaders.append(content_length)
             start_response("403 not authenticated", resheaders)
 #             return ["you are not authenticated"]
-        
+        return self.content
 
         
     def HEAD(self, environ,start_response):
@@ -161,7 +162,7 @@ class ContainerController():
         self.userName = req.headers.get('X-Auth-User', '')
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
 
         
         containers = req.headers.get('container','')
@@ -180,7 +181,7 @@ class ContainerController():
             
             # get all the containers corresponding to such conditions    
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
-            containers_get = self.meta_rpc.call(**kwargs)
+            containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
             if len(containers_dic) != 0:
@@ -200,9 +201,9 @@ class ContainerController():
 #                         ApiMapping().scloud_put_container(**dic)
 #                         ApiMapping().scloud_delete_container(**dic)
                         resbody = ApiMapping().scloud_head_container(**dic)
-
+                        log_dic = {"log_flag":"info", "content":'GET_CONTAINER by '+self.userName+': '+self.domain+'/'+c_name}
+                        self.rpc.cast('logs', json.dumps(log_dic)) 
             
-                        Log().info('GET_CONTAINER by '+self.userName+': '+self.domain+'/'+c_name)
                         
                         for value in resbody:
                             x = (value,resbody[value])
@@ -213,7 +214,8 @@ class ContainerController():
                         
                     except Exception,e:
                         flag = 0
-                        Log().error('PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e))
+                        log_dic = {"log_flag":"error", "content":'PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e)}
+                        self.rpc.cast('logs', json.dumps(log_dic)) 
                         break
             else:
                 print 'Containers not Found'
@@ -250,7 +252,7 @@ class ContainerController():
         self.userName = req.headers.get('X-Auth-User', '')
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
         
         containers = req.headers.get('container','')
         
@@ -264,7 +266,7 @@ class ContainerController():
             c_name = containers[i]
             print 'hello'
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
-            containers_get = self.meta_rpc.call(**kwargs)
+            containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             if len(containers_dic) == 0:
                 print 'Container Not Found'
@@ -300,7 +302,7 @@ class ContainerController():
                      
                     }      
                     
-                    self.meta_rpc.call(**kwargs)
+                    self.rpc.call('meta_queue', **kwargs)
                     for item in kwargs.items():
                         resheaders.append(item)
                     
@@ -309,7 +311,8 @@ class ContainerController():
                 except Exception,e:
                     flag = 0
                     print e
-                    Log().error('PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e))
+                    log_dic = {"log_flag":"error", "content":'PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e)}
+                    self.rpc.cast('logs', json.dumps(log_dic))
                     pass
                 print c_name
             else:
@@ -346,7 +349,7 @@ class ContainerController():
         self.userName = req.headers.get('X-Auth-User', '')
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
 
         
         containers = req.headers.get('container','')
@@ -363,7 +366,7 @@ class ContainerController():
             
             # get all the containers corresponding to such conditions    
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
-            containers_get = self.meta_rpc.call(**kwargs)
+            containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
             if len(containers_dic) != 0:
@@ -384,12 +387,13 @@ class ContainerController():
                         ApiMapping().scloud_delete_container(**dic)
 
                         kwargs = {'id' : parent_id, 'metadata_opr':'delete'}
-                        self.meta_rpc.call(**kwargs)
+                        self.rpc.call('meta_queue', **kwargs)
                         break
                         
                     except Exception,e:
                         flag = 0
-                        Log().error('PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e))
+                        log_dic = {"log_flag":"error", "content":'PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e)}
+                        self.rpc.cast('logs', json.dumps(log_dic))
                         break
             else:
                 print 'Containers not Found'
@@ -418,10 +422,12 @@ class ContainerController():
             -H "original-name:container_old" -H "current-name:container_new"  
             -H "X-Auth-Key: alex"  
             -H "X-Auth-User: alex"  
-            http://localhost:8080/scloud_container/alexhello/haha  
+            http://localhost:8080/scloud_container/[domain-name]/[existing-container]
             -X POST
             
-            container_old is an existing container in haha
+            :param container_old is  in [existing-container]
+            :param container_new will replace as new container name
+            
         '''
         
         self.content = ''
@@ -435,7 +441,7 @@ class ContainerController():
         self.original_name = req.headers.get('original-name','')
         self.current_name = req.headers.get('current-name','')
         
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
 
         containers = req.headers.get('container','')
         containers.append(self.original_name)
@@ -464,7 +470,7 @@ class ContainerController():
             
             # get all the containers corresponding to such conditions    
             kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
-            containers_get = self.meta_rpc.call(**kwargs)
+            containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
             if len(containers_dic) != 0:
@@ -473,17 +479,18 @@ class ContainerController():
                 if i == c_len-1:
                     try:
                         kws = {'m_name':self.current_name, 'metadata_opr':'get',  'm_content_type':'container'}
-                        c_get = self.meta_rpc.call(**kws)
+                        c_get = self.rpc.call('meta_queue', **kws)
                         c_dic = json.loads(c_get)
                         
                         if len(c_dic) == 0:
                             kwargs = {'id':parent_id, 'm_name':self.current_name, 'metadata_opr':'update'}
-                            self.meta_rpc.call(**kwargs)
+                            self.rpc.call('meta_queue', **kwargs)
                         break
                         
                     except Exception,e:
                         flag = 0
-                        Log().error('PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e))
+                        log_dic = {"log_flag":"error", "content":'PUT_CONTAINER by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+'/'+str(req.headers['container'])+' '+str(e)}
+                        self.rpc.cast('logs', json.dumps(log_dic))
                         break
             else:
                 print 'Containers not Found'

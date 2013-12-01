@@ -5,13 +5,6 @@ Created on 2013年10月10日
 @author: adrian
 '''
 
-
-# -*- coding: utf-8 -*-
-'''
-Created on 2013年9月28日
-
-@author: adrian
-'''
 import os
 import webob
 from webob import Request
@@ -20,176 +13,56 @@ from paste.deploy import loadapp
 from wsgiref.simple_server import make_server
 
 from api.swift import swiftAPI
+from proxy.params import *
+
 #Filter
 class ControllerFilter():
-    '''
     
-    0.查看 domain[public, protected, private]
-    1.创建、查看、罗列、删除 container
-    2.修改、获取container的访问权限[public_read, public_read_write, private]
-    3.上传、查看、罗列、删除 Object
-    4.查看 capability
-    
-    ----------not finished yet
-    5.对于大文件支持分片上传(Multi-Part Upload)
-    6.访问时支持If-Modified-Since和If-Match等HTTP参数
-    
-    例子：
-    
-    PUT /cdmi_domains/MyDomain/ HTTP/1.1
-    Host: cloud.example.com
-    Accept: application/cdmi-domain
-    Content-Type: application/cdmi-domain
-    X-CDMI-Specification-Version: 1.0.2
-    {
-        "metadata" : {
-    } }
-    The following shows the response.
-    HTTP/1.1 201 Created
-    Content-Type: application/cdmi-domain
-    X-CDMI-Specification-Version: 1.0.2
-    {
-        "objectType" : "application/cdmi-domain",
-        "objectID" : "00007E7F00104BE66AB53A9572F9F51E",
-        "objectName" : "MyDomain/",
-        "parentURI" : "/cdmi_domains/",
-        "parentID" : "00007E7F0010C058374D08B0AC7B3550",
-        "domainURI" : "/cdmi_domains/MyDomain/",
-        "capabilitiesURI" : "/cdmi_capabilities/domain/",
-        "metadata" : {
-        },
-        "childrenrange" : "0-1",
-        "children" : [
-            "cdmi_domain_summary/",
-            "cdmi_domain_members/"
-        ]
-    }
-    
-    
-    PUT /MyContainer/    HTTP/1.1
-       Host: cloud.example.com
-       Accept: application/cdmi-container
-       Content-Type: application/cdmi-container
-       X-CDMI-Specification-Version: 1.0.2
-       {
-           "metadata" : {
-    } }
-    The following shows the response.
-    6.4
-    HTTP/1.1 201 Created
-    Content-Type: application/cdmi-container
-    X-CDMI-Specification-Version: 1.0.2
-    {
-        "objectType" : "application/cdmi-container",
-        "objectID" : "00007E7F00102E230ED82694DAA975D2",
-        "objectName" : "MyContainer/",
-        "parentURI" : "/",
-        "parentID" : "00007E7F0010128E42D87EE34F5A6560",
-        "domainURI" : "/cdmi_domains/MyDomain/",
-        "capabilitiesURI" : "/cdmi_capabilities/container/",
-        "completionStatus" : "Complete",
-        "metadata" : {
-            "cdmi_size" : "0"
-        },
-        "childrenrange" : "",
-        "children" : [
-    ] }    
-    
-    PUT /MyContainer/MyDataObject.txt HTTP/1.1
-    Host: cloud.example.com
-    Accept: application/cdmi-object
-    Content-Type: application/cdmi-object
-    X-CDMI-Specification-Version: 1.0.2
-    {
-        "mimetype" : "text/plain",
-        "metadata" : {
-    },
-        "value" : "Hello CDMI World!"
-    }
-    The following shows the response.
-    38
-    HTTP/1.1 201 Created
-    Content-Type: application/cdmi-object
-    X-CDMI-Specification-Version: 1.0.2
-    {
-        "objectType" : "application/cdmi-object",
-        "objectID" : "00007E7F0010BD1CB8FF1823CF05BEE4",
-        "objectName" : "MyDataObject.txt",
-        "parentURI" : "/MyContainer/",
-        "parentID" : "00007E7F00102E230ED82694DAA975D2",
-        "domainURI" : "/cdmi_domains/MyDomain/",
-        "capabilitiesURI" : "/cdmi_capabilities/dataobject/",
-        "completionStatus" : "Complete",
-        "mimetype" : "text/plain",
-        "metadata" : {
-            "cdmi_size" : "17"
-        }
-    }
-    
-       
-    GET /MyContainer/ HTTP/1.1
-    Host: cloud.example.com
-    Accept: */*
-    X-CDMI-Specification-Version: 1.0.2
-    The following shows the response.
-    HTTP/1.1 200 OK
-    Content-Type: application/cdmi-container
-       X-CDMI-Specification-Version: 1.0.2
-    {
-        "objectType" : "application/cdmi-container",
-        "objectID" : "00007E7F00102E230ED82694DAA975D2",
-        "objectName" : "MyContainer/",
-        "parentURI" : "/",
-        "parentID" : "00007E7F0010128E42D87EE34F5A6560",
-        "domainURI" : "/cdmi_domains/MyDomain/",
-        "capabilitiesURI" : "/cdmi_capabilities/container/",
-        "completionStatus" : "Complete",
-        "metadata" : {
-            "cdmi_size" : "83"
-        },
-        "childrenrange" : "0-0",
-        "children" : [
-            "MyDataObject.txt"
-        ]
-    }
-    GET /MyContainer/MyDataObject.txt HTTP/1.1
-    Host: cloud.example.com
-    Accept: application/cdmi-object
-    X-CDMI-Specification-Version: 1.0.2
-    The following shows the response.
-    HTTP/1.1 200 OK
-    Content-Type: application/cdmi-object
-    X-CDMI-Specification-Version: 1.0.2
-    {
-    "objectType": "application/cdmi-object",
-    "objectID": "00007E7F0010BD1CB8FF1823CF05BEE4",
-    "objectName": "MyDataObject.txt",
-    "parentURI": "/MyContainer/",
-    }
-    "parentID" : "00007E7F00102E230ED82694DAA975D2",
-    "domainURI": "/cdmi_domains/MyDomain/",
-    "capabilitiesURI": "/cdmi_capabilities/dataobject/",
-    "completionStatus": "Complete",
-    "mimetype": "text/plain",
-    "metadata": {
-        "cdmi_size": "17"
-    },
-    "valuetransferencoding": "utf-8",
-    "valuerange": "0-16",
-    "value": "Hello CDMI World!"
-    '''
     
     def __init__(self,app):
         self.app = app
         pass
     def __call__(self,environ,start_response):
+        '''
+        controller here to parse user's http request
+        '''
+        
+        
+        #use webob to pack the environment value
         req = Request(environ)
         res = Response()
+           
+        #here we set a flag value
+        #flag == HTTPOk: operation success
+        #flag != HTTPOk: operation failed 
+        req.headers['http-flag'] = HTTPOk
+        #here content type includes scloud-object, scloud-domain, scloud-container, scloud-capability
+        #later we may add scloud-queue type
+        self.content_type = req.headers.get('Content-Type', '')
+        #DomainName.scloud.ecust.com
+        self.host = req.headers.get('Host', '')
+        self.cdmi_version = req.headers.get('X-CDMI-Specification-Version', '')
+        self.authorization = req.headers.get('Authorization', '')
+        self.date = req.headers.get('Date', '')
+        self.path = req.path
+ 
+        #Make sure req.headers not ""
+        if not (self.content_type and self.host and self.cdmi_version and self.date and self.authorization):
+            req.headers['http-flag'] = HTTPBadRequest
+            return self.app(environ,start_response)
         
-        
-        self.userName = ''
-        self.userKey = ''
-        self.token = ''
+        #Set X-Auth-User and X-Auth-Key
+        req.headers['X-Auth-User'], req.headers['X-Auth-Key'] = self.authorization.strip().split(':')
+        #make sure X-Auth-User and X-Auth-Key not ""
+        if not (req.headers['X-Auth-User'] and req.headers['X-Auth-Key']):
+            req.headers['http-flag'] = HTTPBadRequest
+            return self.app(environ,start_response)
+            
+        #Make sure content-type is legal
+        if self.content_type not in ['scloud-domain', 'scloud-container', 'scloud-object', 'scloud-capability', 'scloud-queue']:
+            req.headers['http-flag'] = HTTPBadRequest
+            return self.app(environ,start_response)
+            
         
         url_path = req.path.strip('/').split('/')
         
@@ -223,11 +96,9 @@ class ControllerFilter():
                                          ])
             return ''
         
-#         print url_path
         
         
         
-        return self.app(environ,start_response)
     @classmethod
     def factory(cls, global_conf, **kwargs):
         print "in LogFilter.factory", global_conf, kwargs

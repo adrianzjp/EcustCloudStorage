@@ -12,7 +12,7 @@ from paste.deploy import loadapp
 from wsgiref.simple_server import make_server
 
 from services.backend.log.log import Log    
-
+import hashlib
 
 
 from api.swift import swiftAPI
@@ -25,12 +25,38 @@ class AuthFilter():
         req = Request(environ)
         res = Response()
         self.token = ''
-#         for n in req.headers:
-#             if 'X-Auth-User' == n:
-#                 self.userName = str(req.headers[n]).strip()
-#             if 'X-Auth-Key' == n:
-#                 self.userKey = str(req.headers[n]).strip()
-                
+        
+        #added for real environment
+        #the userKey in the header will be encrypted
+        #will not cause any security issue
+        
+        
+        #--------------
+#             self.content_type = req.headers.get('Content-Type', '')
+#             #DomainName.scloud.ecust.com
+#             self.host = req.headers.get('Host', '')
+#             self.cdmi_version = req.headers.get('X-CDMI-Specification-Version', '')
+#             self.authorization = req.headers.get('Authorization', '')
+#             self.date = req.headers.get('Date', '')
+#             self.path = req.path
+#             
+#             self.key = get the key from the mysql database by the user name
+#             
+#             key_construct = self.userName+'_'+self.path+'_'+self.date
+#             key_md5 = hashlib.md5(key_construct).hexdigest() 
+#             
+#             if key_md5 == self.userKey:return True
+#             
+#             return False
+        #---------------
+        
+        
+        
+        
+        # added for test environment
+        # the following test mock will be replaced by the above section in production mode
+        
+        
         self.userName = req.headers.get('X-Auth-User', '')
         self.userKey = req.headers.get('X-Auth-Key', '')
         

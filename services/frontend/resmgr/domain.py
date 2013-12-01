@@ -19,7 +19,7 @@ from api.api_map import ApiMapping
 
 from api import settings
 
-from meta_client import MetaClient
+from rpc import Rpc
 
 
 from services.backend.log.log import Log    
@@ -27,11 +27,6 @@ from services.backend.log.log import Log
 class DomainController():
     def __init__(self, global_conf):
         self.global_conf = global_conf
-        self.token = ''
-        self.userName = ''
-        self.userKey = ''
-        self.content = ''
-        pass
     
     def GET(self, environ,start_response):
         req = Request(environ)
@@ -41,7 +36,7 @@ class DomainController():
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
         self.token = ''
-        self.meta_rpc = MetaClient()
+        self.rpc = Rpc()
 
 
         flag = 1
@@ -59,19 +54,21 @@ class DomainController():
             
             print contianers_in_account
             
+            
             '''
             codes below to change the storage_name to logical name
             '''
             
             for container in contianers_in_account:
                 kwargs = {'m_storage_name':container.get('name'), 'metadata_opr':'get', 'm_content_type':'container'}
-                containers_get = self.meta_rpc.call(**kwargs)
+                containers_get = self.rpc.call('meta_queue', **kwargs)
                 containers_dic = json.loads(containers_get)
                 if len(containers_dic) != 0:
                     c_logic_name = containers_dic[0].get('m_name')
                     container['name'] = c_logic_name
-             
-            Log().info('GET_DOMAIN by '+self.userName+': '+self.domain)
+                    
+            log_dic = {"log_flag":"info", "content":'GET_DOMAIN by '+self.userName+': '+self.domain}
+            self.rpc.cast('logs', json.dumps(log_dic)) 
 
             
             for value in resbody:
@@ -85,8 +82,8 @@ class DomainController():
 #             print self.token, self.userKey, self.userName
         except Exception,e:
             flag = 0
-            Log().error('GET_DOMAIN by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+' '+str(e))
-            print e
+            log_dic = {"log_flag":"error", "content":'GET_DOMAIN by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+' '+str(e)}
+            self.rpc.cast('logs', json.dumps(log_dic)) 
             
         
         if flag:
@@ -101,7 +98,7 @@ class DomainController():
             resheaders.append(content_length)
             start_response("403 not authenticated", resheaders)
         
-#         return self.content
+        return self.content
         
     def HEAD(self, environ,start_response):
         req = Request(environ)
@@ -111,6 +108,8 @@ class DomainController():
         self.userName = req.headers.get('X-Auth-User', '')
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
+        self.rpc = Rpc()
+
 
         flag = 1
         resheaders = []
@@ -129,8 +128,8 @@ class DomainController():
             
 #             resbody=  (Connection(authurl =auth_url, user = self.userName,\
 #                             key = self.userKey, tenant_name = req.headers['domain']).head_account())
-            
-            Log().info('HEAD_DOMAIN by '+self.userName+': '+self.domain)
+            log_dic = {"log_flag":"info", "content":'HEAD_DOMAIN by '+self.userName+': '+self.domain}
+            self.rpc.cast('logs', json.dumps(log_dic)) 
 
             for value in resbody:
                 x = (value,resbody[value])
@@ -142,9 +141,9 @@ class DomainController():
 #             print self.token, self.userKey, self.userName
         except Exception,e:
             flag = 0
-            Log().error('HEAD_DOMAIN by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+' '+str(e))
-            print e
-            pass
+            log_dic = {"log_flag":"error", "content":'HEAD_DOMAIN by '+req.headers.get('X-Auth-User')+': '+req.headers['domain']+' '+str(e)}
+            self.rpc.cast('logs', json.dumps(log_dic)) 
+            
         if flag:
             start_response("200 OK", resheaders)
 #             return [str(contianers_in_account),]

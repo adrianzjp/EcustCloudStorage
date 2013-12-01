@@ -1122,7 +1122,7 @@ def test():
     
 #     aus = client.Client(auth_url=AUTH_URL,username='admin',password='ADMIN',tenant_name='admin')
 #     print aus.users.findall()
-    conn = Connection(authurl = AUTH_URL,user = 'alex',key = 'alex',tenant_name = 'alexdomain')
+    conn = Connection(authurl = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
     conn.head_account()
 #     conn = Connection(authurl = AUTH_URL,user = 'admin',key = 'ADMIN',tenant_name = 'admin')
 #     conn.post_account({'content-length': '5'})d
