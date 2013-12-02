@@ -29,8 +29,6 @@ class AuthFilter():
         #added for real environment
         #the userKey in the header will be encrypted
         #will not cause any security issue
-        
-        
         #--------------
 #             self.content_type = req.headers.get('Content-Type', '')
 #             #DomainName.scloud.ecust.com

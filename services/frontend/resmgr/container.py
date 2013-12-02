@@ -10,6 +10,8 @@ import webob
 from webob import Request
 from webob import Response
 
+from proxy.params import *
+
 import json
 
 from api.api_map import ApiMapping
@@ -51,7 +53,6 @@ class ContainerController():
         self.userName = ''
         self.userKey = ''
         self.content = ''
-        self.metadata_opr = DataLogic()
         pass
     
     def GET(self, environ,start_response):
@@ -71,7 +72,19 @@ class ContainerController():
         
         c_len = len(containers)# the length of the container list
         
-        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
+        #modified by adrian
+        #use rabbit to diliver message
+        kwargs = {'metadata_target':'domain', 'name':self.domain, 'metadata_opr':'get'}
+        domains_get = self.rpc.call('meta_queue', **kwargs)
+        domains_dic = json.loads(domains_get)
+        
+        parent_id = domains_dic[0].get('id', '')
+        
+        if parent_id == '':
+            req.headers['http-flag'] = HTTPInternalServerError
+            log_dic = {"log_flag":"error", "content":'can not get the domain ['+self.domain+"] id"}
+            self.rpc.cast('logs', json.dumps(log_dic))             
+#         parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
@@ -82,7 +95,7 @@ class ContainerController():
             c_name = containers[i]
             
             # get all the containers corresponding to such conditions    
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
+            kwargs = {'metadata_target':'data', 'm_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
             containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
@@ -111,7 +124,7 @@ class ContainerController():
                         '''
                         
                         for container in content:
-                            kwargs = {'m_storage_name':container.get('name'), 'metadata_opr':'get'}
+                            kwargs = {'metadata_target':'data', 'm_storage_name':container.get('name'), 'metadata_opr':'get'}
                             containers_get = self.rpc.call('meta_queue', **kwargs)
                             containers_dic = json.loads(containers_get)
                             if len(containers_dic) != 0:
@@ -169,7 +182,20 @@ class ContainerController():
         
         c_len = len(containers)# the length of the container
         
-        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
+        
+        #modified by adrian
+        #use rabbit to diliver message
+        kwargs = {'metadata_target':'domain', 'name':self.domain, 'metadata_opr':'get'}
+        domains_get = self.rpc.call('meta_queue', **kwargs)
+        domains_dic = json.loads(domains_get)
+        
+        parent_id = domains_dic[0].get('id', '')
+        
+        if parent_id == '':
+            req.headers['http-flag'] = HTTPInternalServerError
+            log_dic = {"log_flag":"error", "content":'can not get the domain ['+self.domain+"] id"}
+            self.rpc.cast('logs', json.dumps(log_dic))           
+#         parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
@@ -180,7 +206,7 @@ class ContainerController():
             c_name = containers[i]
             
             # get all the containers corresponding to such conditions    
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
+            kwargs = {'metadata_target':'data', 'm_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
             containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
@@ -258,14 +284,27 @@ class ContainerController():
         
         c_len = len(containers)# the length of the container
         
-        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
+        
+        #modified by adrian
+        #use rabbit to diliver message
+        kwargs = {'metadata_target':'domain', 'name':self.domain, 'metadata_opr':'get'}
+        domains_get = self.rpc.call('meta_queue', **kwargs)
+        domains_dic = json.loads(domains_get)
+        
+        parent_id = domains_dic[0].get('id', '')
+        
+        if parent_id == '':
+            req.headers['http-flag'] = HTTPInternalServerError
+            log_dic = {"log_flag":"error", "content":'can not get the domain ['+self.domain+"] id"}
+            self.rpc.cast('logs', json.dumps(log_dic))           
+#         parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
         for i in xrange(c_len):
             c_name = containers[i]
             print 'hello'
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
+            kwargs = {'metadata_target':'data', 'm_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id, 'm_content_type':'container'}
             containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             if len(containers_dic) == 0:
@@ -287,6 +326,7 @@ class ContainerController():
         #                             key = self.userKey, tenant_name = req.headers['domain']).get_object(req.headers['container'], req.headers['object']))
                     
                     kwargs = {
+                                'metadata_target':'data',
                                 'm_name' : c_name,
                                 'm_storage_name' : container_storagename,
                                 'm_domain_name' : self.domain,
@@ -356,7 +396,20 @@ class ContainerController():
         
         c_len = len(containers)# the length of the container
         
-        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
+        
+        #modified by adrian
+        #use rabbit to diliver message
+        kwargs = {'metadata_target':'domain', 'name':self.domain, 'metadata_opr':'get'}
+        domains_get = self.rpc.call('meta_queue', **kwargs)
+        domains_dic = json.loads(domains_get)
+        
+        parent_id = domains_dic[0].get('id', '')
+        
+        if parent_id == '':
+            req.headers['http-flag'] = HTTPInternalServerError
+            log_dic = {"log_flag":"error", "content":'can not get the domain ['+self.domain+"] id"}
+            self.rpc.cast('logs', json.dumps(log_dic))           
+#         parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
@@ -365,7 +418,7 @@ class ContainerController():
             c_name = containers[i]
             
             # get all the containers corresponding to such conditions    
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
+            kwargs = {'metadata_target':'data', 'm_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
             containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
@@ -386,7 +439,7 @@ class ContainerController():
 #                         ApiMapping().scloud_put_container(**dic)
                         ApiMapping().scloud_delete_container(**dic)
 
-                        kwargs = {'id' : parent_id, 'metadata_opr':'delete'}
+                        kwargs = {'metadata_target':'data', 'id' : parent_id, 'metadata_opr':'delete'}
                         self.rpc.call('meta_queue', **kwargs)
                         break
                         
@@ -448,8 +501,21 @@ class ContainerController():
 
         c_len = len(containers)# the length of the container
         
+        
+        #modified by adrian
+        #use rabbit to diliver message
+        kwargs = {'metadata_target':'domain', 'name':self.domain, 'metadata_opr':'get'}
+        domains_get = self.rpc.call('meta_queue', **kwargs)
+        domains_dic = json.loads(domains_get)
+        
+        parent_id = domains_dic[0].get('id', '')
+        
+        if parent_id == '':
+            req.headers['http-flag'] = HTTPInternalServerError
+            log_dic = {"log_flag":"error", "content":'can not get the domain ['+self.domain+"] id"}
+            self.rpc.cast('logs', json.dumps(log_dic))           
         #initialize the parent_id which is the id of domain
-        parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
+#         parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
         
         flag = 1
         resheaders = []
@@ -469,7 +535,7 @@ class ContainerController():
             c_name = containers[i]
             
             # get all the containers corresponding to such conditions    
-            kwargs = {'m_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
+            kwargs = {'metadata_target':'data', 'm_name':c_name, 'metadata_opr':'get', 'm_parent_id':parent_id,  'm_content_type':'container'}
             containers_get = self.rpc.call('meta_queue', **kwargs)
             containers_dic = json.loads(containers_get)
             
@@ -478,12 +544,12 @@ class ContainerController():
 
                 if i == c_len-1:
                     try:
-                        kws = {'m_name':self.current_name, 'metadata_opr':'get',  'm_content_type':'container'}
+                        kws = {'metadata_target':'data', 'm_name':self.current_name, 'metadata_opr':'get',  'm_content_type':'container'}
                         c_get = self.rpc.call('meta_queue', **kws)
                         c_dic = json.loads(c_get)
                         
                         if len(c_dic) == 0:
-                            kwargs = {'id':parent_id, 'm_name':self.current_name, 'metadata_opr':'update'}
+                            kwargs = {'metadata_target':'data', 'id':parent_id, 'm_name':self.current_name, 'metadata_opr':'update'}
                             self.rpc.call('meta_queue', **kwargs)
                         break
                         

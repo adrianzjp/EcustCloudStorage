@@ -41,6 +41,8 @@ class ResourceServer():
             self.content = self.container_controller.GET(environ, start_response)
         if self.content_type == 'scloud-object':
             self.content = self.obj_controller.GET(environ, start_response)
+        if self.content_type == 'scloud-capability':
+            self.content = self.capability_controller.GET(environ, start_response)
         
     def HEAD(self, environ,start_response):
         if self.content_type == 'scloud-domain':

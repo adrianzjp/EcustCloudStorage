@@ -1,5 +1,4 @@
-# coding: UTF-8
-
+# -*- coding: utf-8 -*-
 # Copyright (c) 2010-2012 OpenStack, LLC.
 
 # how to use the apiMapping
@@ -7,11 +6,20 @@
 # 2. construct a dictionary according to the param list
 # 3. diliver the dict as **param to the standard function
 
+'''
+Created on 2013年10月15日
+
+@author: adrian
+'''
+
+
 from xml.dom import minidom
-from api.swift import swiftAPI
-from s3apiFork import S3Api
+
 from api.settings import AUTH_URL
-from services.backend.log.log import Log
+from api.swift import swiftAPI
+from api.s3 import s3API
+from api.keystone import client
+
 
 
 class ApiMapping():            

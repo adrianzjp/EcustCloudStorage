@@ -10,9 +10,7 @@ import webob
 from webob import Request
 from webob import Response
 from paste.deploy import loadapp
-from wsgiref.simple_server import make_server
 
-from api.swift import swiftAPI
 from proxy.params import *
 
 #Filter
@@ -65,6 +63,8 @@ class ControllerFilter():
             
         
         url_path = req.path.strip('/').split('/')
+        
+        req.headers['url_pattern'] = url_path[0]
         
         if url_path[0]=='scloud_domain':
             req.headers['domain'] = url_path[1]

@@ -60,7 +60,7 @@ class DomainController():
             '''
             
             for container in contianers_in_account:
-                kwargs = {'m_storage_name':container.get('name'), 'metadata_opr':'get', 'm_content_type':'container'}
+                kwargs = {'metadata_target':'data', 'm_storage_name':container.get('name'), 'metadata_opr':'get', 'm_content_type':'container'}
                 containers_get = self.rpc.call('meta_queue', **kwargs)
                 containers_dic = json.loads(containers_get)
                 if len(containers_dic) != 0:
