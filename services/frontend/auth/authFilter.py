@@ -26,7 +26,7 @@ class AuthFilter():
         res = Response()
         self.token = ''
         
-        #added for real environment
+        #added for production environment
         #the userKey in the header will be encrypted
         #will not cause any security issue
         #--------------

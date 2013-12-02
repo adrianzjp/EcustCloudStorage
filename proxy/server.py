@@ -17,11 +17,17 @@ from eventlet import wsgi
 import eventlet
 
 from services_config import services_available
+from proxy.params import *
 
 # from services import services
 
 class Server():
     '''
+    @important
+    the server listen on port :8080
+    server port can be changed if any conflict occurs
+    ---------------------------
+    
     目前支持的几大对象：
     domain, container, object, capability
     ---------
@@ -219,8 +225,8 @@ class Server():
         pass
     def start(self):
         
-        configfile="config.ini"
-        appname="pdl"
+        configfile = proxy_server_config_file
+        appname = "scloud_proxy"
         wsgi_app = loadapp("config:%s" % os.path.abspath(configfile), appname)
         wsgi.server(eventlet.listen(('localhost', 8080)), wsgi_app)
     def stop(self):    

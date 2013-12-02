@@ -71,6 +71,7 @@ class StatusMap(object):
     
 status_map = StatusMap()
 
+#HTTP Status Code Definition
 HTTPOk = status_map[200]
 HTTPCreated = status_map[201]
 HTTPAccepted = status_map[202]
@@ -99,6 +100,10 @@ HTTPBadGateway = status_map[502]
 HTTPServiceUnavailable = status_map[503]
 HTTPInsufficientStorage = status_map[507]
 
-
+#Log File Path
 LogFilePath = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/services/backend/log/log.txt'
+
+#Server Configuration File Path
+proxy_server_config_file = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/proxy/config.ini'
+pie_server_config_file = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/services/backend/pie/config.ini'
 

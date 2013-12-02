@@ -558,3 +558,85 @@
 2013-12-02 10:51:41,154 - INFO: GET_CONTAINER by admin: admin/haha
 2013-12-02 10:51:41,168 - WARNING: Unknown state on disconnect: 0
 2013-12-02 10:51:41,168 - WARNING: Unknown state on disconnect: 0
+2013-12-02 11:23:21,081 - INFO: admin authorized logging in
+2013-12-02 16:21:42,850 - INFO: admin authorized logging in
+2013-12-02 17:06:43,422 - INFO: admin authorized logging in
+2013-12-02 17:06:47,521 - INFO: admin authorized logging in
+2013-12-02 17:06:47,524 - INFO: Connecting to ::1:5672
+2013-12-02 17:07:13,896 - INFO: admin authorized logging in
+2013-12-02 17:07:13,897 - INFO: Connecting to ::1:5672
+2013-12-02 17:08:55,710 - INFO: admin authorized logging in
+2013-12-02 17:08:55,711 - INFO: Connecting to ::1:5672
+2013-12-02 17:08:59,354 - INFO: admin authorized logging in
+2013-12-02 17:08:59,355 - INFO: Connecting to ::1:5672
+2013-12-02 17:08:59,669 - INFO: Closing connection (200): Normal shutdown
+2013-12-02 17:08:59,671 - INFO: GET_CONTAINER by admin: admin/haha
+2013-12-02 17:08:59,679 - WARNING: Unknown state on disconnect: 0
+2013-12-02 17:08:59,680 - WARNING: Unknown state on disconnect: 0
+2013-12-02 17:11:11,604 - INFO: admin authorized logging in
+2013-12-02 17:11:11,605 - INFO: Connecting to ::1:5672
+2013-12-02 17:11:11,932 - INFO: Closing connection (200): Normal shutdown
+2013-12-02 17:11:11,933 - INFO: GET_CONTAINER by admin: admin/haha
+2013-12-02 17:11:11,942 - WARNING: Unknown state on disconnect: 0
+2013-12-02 17:11:11,943 - WARNING: Unknown state on disconnect: 0
+2013-12-02 17:11:22,052 - INFO: admin authorized logging in
+2013-12-02 17:11:22,053 - INFO: Connecting to ::1:5672
+2013-12-02 17:11:37,547 - INFO: admin authorized logging in
+2013-12-02 17:11:37,548 - INFO: Connecting to ::1:5672
+2013-12-02 17:11:37,835 - INFO: Closing connection (200): Normal shutdown
+2013-12-02 17:11:37,837 - INFO: GET_CONTAINER by admin: admin/haha
+2013-12-02 17:11:37,840 - WARNING: Unknown state on disconnect: 0
+2013-12-02 17:11:37,840 - WARNING: Unknown state on disconnect: 0
+2013-12-02 17:11:53,663 - INFO: admin authorized logging in
+2013-12-02 17:11:53,665 - INFO: Connecting to ::1:5672
+2013-12-02 17:11:54,178 - INFO: Closing connection (200): Normal shutdown
+2013-12-02 17:11:54,179 - INFO: GET_CONTAINER by admin: admin/aa
+2013-12-02 17:11:54,192 - WARNING: Unknown state on disconnect: 0
+2013-12-02 17:11:54,192 - WARNING: Unknown state on disconnect: 0
+2013-12-02 21:23:22,657 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:23:50,716 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:24:48,763 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:25:46,086 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:26:50,797 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:27:20,266 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:27:39,725 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:30:15,550 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:32:04,319 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:32:48,326 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:33:55,927 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:34:15,282 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:35:48,116 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 21:38:15,932 - ERROR: scloud pie service can not get domain_id param or size param, please check the url
+2013-12-02 22:41:10,936 - INFO: admin authorized logging in
+2013-12-02 22:41:10,939 - INFO: Connecting to ::1:5672
+2013-12-02 22:42:46,128 - INFO: admin authorized logging in
+2013-12-02 22:42:46,129 - INFO: Connecting to ::1:5672
+2013-12-02 22:44:08,475 - INFO: admin authorized logging in
+2013-12-02 22:44:08,476 - INFO: Connecting to ::1:5672
+2013-12-02 22:45:28,273 - INFO: admin authorized logging in
+2013-12-02 22:45:28,275 - INFO: Connecting to ::1:5672
+2013-12-02 22:46:01,820 - INFO: admin authorized logging in
+2013-12-02 22:46:01,823 - INFO: Connecting to ::1:5672
+2013-12-02 22:46:02,568 - INFO: Closing connection (200): Normal shutdown
+2013-12-02 22:46:02,569 - INFO: PUT_OBJECT by admin: admin/06d21f8362679d340cb9768d62107a1b/serverxxx.py
+2013-12-02 22:46:02,585 - WARNING: Unknown state on disconnect: 0
+2013-12-02 22:46:02,585 - WARNING: Unknown state on disconnect: 0
+2013-12-02 22:56:18,629 - INFO: admin authorized logging in
+2013-12-02 22:56:18,630 - INFO: Connecting to ::1:5672
+2013-12-02 22:56:19,147 - INFO: Closing connection (200): Normal shutdown
+2013-12-02 22:56:19,148 - INFO: PUT_OBJECT by admin: admin/06d21f8362679d340cb9768d62107a1b/serverxxxxxx.py
+2013-12-02 22:56:19,164 - WARNING: Unknown state on disconnect: 0
+2013-12-02 22:56:19,164 - WARNING: Unknown state on disconnect: 0
+2013-12-02 22:56:19,165 - CRITICAL: Attempted to send frame when closed
+2013-12-02 22:57:07,520 - INFO: admin authorized logging in
+2013-12-02 22:57:07,523 - INFO: Connecting to ::1:5672
+2013-12-02 22:57:08,606 - INFO: Closing connection (200): Normal shutdown
+2013-12-02 22:57:08,607 - INFO: PUT_OBJECT by admin: admin/06d21f8362679d340cb9768d62107a1b/sexrverxxxxxx.py
+2013-12-02 22:57:08,643 - WARNING: Unknown state on disconnect: 0
+2013-12-02 22:57:08,643 - WARNING: Unknown state on disconnect: 0
+2013-12-02 22:57:55,792 - INFO: admin authorized logging in
+2013-12-02 22:57:55,793 - INFO: Connecting to ::1:5672
+2013-12-02 22:57:57,334 - INFO: Closing connection (200): Normal shutdown
+2013-12-02 22:57:57,335 - INFO: GET_CONTAINER by admin: admin/haha
+2013-12-02 22:57:57,356 - WARNING: Unknown state on disconnect: 0
+2013-12-02 22:57:57,357 - WARNING: Unknown state on disconnect: 0

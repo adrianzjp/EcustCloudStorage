@@ -229,13 +229,17 @@ class ObjectController():
         self.content = ''
         req = Request(environ)
         res = Response()
+        self.rpc = Rpc()
+        
 
         self.userName = req.headers.get('X-Auth-User', '')
         self.userKey = req.headers.get('X-Auth-Key', '')
         self.domain = req.headers.get('domain', '')
         self.object = req.headers.get('object', '')
-        self.rpc = Rpc()
+        self.size = req.headers.get('content-length', '')
         containers = req.headers.get('container','')
+        
+        print 'the size of the object is %s' % self.size
         
         c_len = len(containers)# the length of the container
 
@@ -246,16 +250,29 @@ class ObjectController():
         domains_dic = json.loads(domains_get)
         
         parent_id = domains_dic[0].get('id', '')
+         
+        resheaders = []
+        info = '200 OK'
         
+        #Get the content-length(bytes) and send request to pie service
+        dic = {"id":parent_id, "size":self.size, "opr": 'GET'}
+        domain_status = self.rpc.call('pie_queue', **dic)
+        
+        if domain_status == '1':
+            #change the domain status
+            dic = {"id":parent_id, "size":self.size, "opr": 'POST'}
+            domain_status = self.rpc.call('pie_queue', **dic)
+        else:
+            info = '409 Domain Capacity not enough'
+            
+        
+                
         if parent_id == '':
             req.headers['http-flag'] = HTTPInternalServerError
             log_dic = {"log_flag":"error", "content":'can not get the domain ['+self.domain+"] id"}
             self.rpc.cast('logs', json.dumps(log_dic))
          
 #         parent_id = DomainLogic().get_by_kwargs(**{'name':self.domain})[0].id
-         
-        resheaders = []
-        info = '200 OK'
         
         
         for i in xrange(c_len):

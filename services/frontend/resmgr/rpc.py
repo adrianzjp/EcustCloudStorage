@@ -81,8 +81,7 @@ class Rpc(object):
 
 # For Testing
 if __name__ == '__main__':
-    for i in xrange(10):
-        rpc = Rpc()
-        
-        dic = {"log_flag":"info", "content":"hello, adrian"}
-        rpc.cast('logs', json.dumps(dic))
+    rpc = Rpc()
+    
+    dic = {"id":"2", "size":"11111111", "opr": 'GET'}
+    print rpc.call('pie_queue', **dic)
