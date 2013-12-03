@@ -1,5 +1,5 @@
 
-/*database openstack*/
+/*database scloud*/
 
 DROP TABLE IF EXISTS `data`;
 SET @saved_cs_client     = @@character_set_client;
