@@ -20,7 +20,7 @@ from api.swift import swiftAPI
 from api.s3 import s3API
 from api.keystone import client
 
-
+from proxy.params import *
 
 class ApiMapping():            
     """
@@ -40,7 +40,8 @@ class ApiMapping():
             
             
     def _api_mapping(self, fun_name, api_type, **kws):
-        apis = minidom.parse('/Users/adrian/Dropbox/workspace/EcustCloudStorage/api/apiconfig.xml')
+#         apis = minidom.parse('/Users/adrian/Dropbox/workspace/EcustCloudStorage/api/apiconfig.xml')
+        apis = minidom.parse(APIConfigFile)
         
         for api in apis.getElementsByTagName('api'):
             if api.attributes['name'].firstChild.nodeValue == fun_name:

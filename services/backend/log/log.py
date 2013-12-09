@@ -12,7 +12,7 @@ class Log:
     def __init__(self):
 #         if not os.path.isfile(os.path.join(os.getcwd(), 'log.txt')):
         logging.basicConfig(filename = LogFilePath, \
-                            level = logging.INFO, format = '%(asctime)s - %(levelname)s: %(message)s')
+                            level = logging.INFO, format = '[%(asctime)s] - [%(levelname)s]: [%(message)s]')
     
     def _format(self,meg):
         return " ".join(meg.split())

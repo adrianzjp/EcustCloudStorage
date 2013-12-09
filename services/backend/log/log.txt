@@ -1,0 +1,2 @@
+[2013-12-09 10:25:17,572] - [INFO]: [admin authorized logging in]
+[2013-12-09 10:25:18,700] - [INFO]: [GET_CONTAINER by admin: admin/haha]

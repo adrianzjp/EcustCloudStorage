@@ -13,9 +13,12 @@ from wsgiref.simple_server import make_server
 
 from services.backend.log.log import Log    
 import hashlib
+import json
 
 
 from api.swift import swiftAPI
+
+from services.frontend.resmgr.rpc import Rpc
 #Filter
 class AuthFilter():
     def __init__(self,app):
@@ -25,6 +28,8 @@ class AuthFilter():
         req = Request(environ)
         res = Response()
         self.token = ''
+        
+        self.rpc = Rpc()
         
         #added for production environment
         #the userKey in the header will be encrypted
@@ -63,12 +68,15 @@ class AuthFilter():
             
             auth_url =  str(self.app.global_conf['AUTH_URL']).strip("'")
             url, self.token =  swiftAPI.Connection(authurl =auth_url, user = self.userName, key = self.userKey, tenant_name = req.headers['domain'])\
-            .get_auth()         
-            Log().info(req.headers.get('X-Auth-User')+' authorized logging in')
+            .get_auth()   
+            
+            log_dic = {"log_flag":"info", "content":req.headers.get('X-Auth-User')+' authorized logging in'}
+            self.rpc.cast('logs', json.dumps(log_dic))      
                
         except Exception,e:
             print e
-            Log().error(req.headers.get('X-Auth-User')+' not authorized to login in, please contact with zhoujip@yeah.net')
+            log_dic = {"log_flag":"error", "content":req.headers.get('X-Auth-User')+' not authorized to login in, please contact with zhoujip@yeah.net'}
+            self.rpc.cast('logs', json.dumps(log_dic))      
 
             
         

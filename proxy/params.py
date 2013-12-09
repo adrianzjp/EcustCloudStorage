@@ -103,6 +103,12 @@ HTTPInsufficientStorage = status_map[507]
 #Log File Path
 LogFilePath = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/services/backend/log/log.txt'
 
+#API Configuration File
+APIConfigFile = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/api/apiconfig.xml'
+
+#Service Configuration File
+ServiceConfigFile = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/services/backend/mq/services.xml'
+
 #Server Configuration File Path
 proxy_server_config_file = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/proxy/config.ini'
 pie_server_config_file = '/Users/adrian/Dropbox/workspace/EcustCloudStorage/services/backend/pie/config.ini'

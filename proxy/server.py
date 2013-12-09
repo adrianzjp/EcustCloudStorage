@@ -16,7 +16,6 @@ from paste.deploy import loadapp
 from eventlet import wsgi
 import eventlet
 
-from services_config import services_available
 from proxy.params import *
 
 # from services import services
